@@ -2,17 +2,21 @@ import json
 import requests
 from requests.auth import HTTPBasicAuth
 import os #trabajo de ruta
-from dotenv import load_dotenv #variables de entorno
+from dotenv import load_dotenv 
 
-#Variables de entorno
+# =========================
+# CONFIG
+# =========================
 load_dotenv()
-
 COUCH_URL = os.getenv("COUCHDB_URL")
 DB_NAME = os.getenv("COUCHDB_DB")
 USER = os.getenv("COUCHDB_USER")
 PASSWORD = os.getenv("COUCHDB_PASSWORD")
 
 BATCH_SIZE = int(os.getenv("BATCH_SIZE", 1000))
+
+# Auth para request
+auth = HTTPBasicAuth(USER, PASSWORD)
 
 #Diccionario de municipios, para no añadir solo el codigo
 municipios = {
@@ -336,48 +340,41 @@ municipios = {
 
 # Archivos GeoJSON
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
 FILES = [
     ("lonjas", os.path.join(BASE_DIR, "../data/lonjasmercadosferias2025.geojson")),
     ("parques", os.path.join(BASE_DIR, "../data/parques2025.geojson"))
 ]
 
 # ==============================
-# UTILIDADES
+# 1. LIMPIAMOS BASE DE DATOS
 # ==============================
-
-auth = HTTPBasicAuth(USER, PASSWORD)
-
-"""
-Borra las base de dayos creadas, limpiando el conjunto de datos
-"""
 def recreate_db():
     print("🔄 Reiniciando base de datos...")
-
+    
+    #Eliminamos base de datos
     res = requests.delete(f"{COUCH_URL}/{DB_NAME}", auth=auth)
-
     if res.status_code not in [200, 202, 404]:
         print("❌ Error borrando DB:", res.text)
         
+    #La volvemos a añadir, ya vacia
     res = requests.put(f"{COUCH_URL}/{DB_NAME}", auth=auth)
-
     if res.status_code in [201, 202]:
         print("✅ DB creada")
     else:
         print("⚠️ DB ya existía o error:", res.text)
 
-"""
-Funcion encargada de leer los datos geojson y traduccirlo a un conjunto de documentos json para añadirlo
-dentro de couchDB
-"""
+# ===============================
+# 2. TRANSFORMAR GEOJSON A JSON
+# ===============================
 def load_geojson(file_path, tipo):
     print(f"📂 Procesando {file_path}...")
 
+    #Leemos archivo
     with open(file_path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
+    #Transformamos un elemento del geoJSON a un JSON
     docs = []
-
     for i, feature in enumerate(data["features"]):
         props = feature.get("properties", {})
         geom = feature.get("geometry", {})
@@ -400,17 +397,17 @@ def load_geojson(file_path, tipo):
     print(f"✅ {len(docs)} documentos preparados")
     return docs
 
-"""
-Envia los documentos al servidor de couchDB en bulk, conjunto de documentos
-"""
+# ===============================
+# 3. AÑADIR DOCS EN BULK A COUCH
+# ===============================
 def bulk_insert(docs):
+    #Rutas de peticiones bulk
     url = f"{COUCH_URL}/{DB_NAME}/_bulk_docs"
-
+    #Bucle de documentos con maximo
     for i in range(0, len(docs), BATCH_SIZE):
         batch = docs[i:i+BATCH_SIZE]
 
         print(f"📤 Insertando batch {i} - {i+len(batch)}")
-
         res = requests.post(url, json={"docs": batch}, auth=auth)
 
         if res.status_code not in [201, 202]:
@@ -422,7 +419,6 @@ def bulk_insert(docs):
 # ==============================
 # MAIN
 # ==============================
-
 def main():
     recreate_db()
 
@@ -434,7 +430,7 @@ def main():
 
     bulk_insert(all_docs)
 
-    print("🎉 ETL COMPLETADO")
+    print("🎉 ETL COUCH COMPLETADO 🎉")
 
 
 if __name__ == "__main__":
