@@ -26,9 +26,11 @@ CREATE INDEX ON :Usuario(id);
 CREATE INDEX ON :Lugar(id);
 CREATE INDEX ON :Lugar(name);
 CREATE INDEX ON :Lugar(codigo_municipio);
+CREATE INDEX ON :Lugar(media); //Valido? o no, hay que verlo :^ mejor que recorrer todo
 
 // Comentario
 CREATE INDEX ON :Comentario(id);
+CREATE INDEX ON :Comentario(ranking); #filtrar por valoraciones // valido? 
 
 // ======================================
 // LOG DE CREACION 
