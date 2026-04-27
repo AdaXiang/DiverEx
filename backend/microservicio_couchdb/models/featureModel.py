@@ -10,5 +10,6 @@ class FeatureModel(BaseModel):
     rev: Optional[str] = Field(None, alias="_rev")
     type: str
     dataset: str  # "lonjas" o "parques"
+    geo_point: dict  # {"lat": ..., "lon": ...}
     geometry: GeometryModel
     properties: dict  # Guardamos el diccionario crudo para máxima flexibilidad

@@ -1,10 +1,22 @@
+from dotenv import load_dotenv
+
 from dao.placeDAO import PlaceDAO
 from dto.placeDTO import PlaceDTO
 from typing import Optional, List
+import os
 
 class PlaceService:
+
     def __init__(self):
-        self.dao = PlaceDAO()
+        load_dotenv()
+        print(os.getenv("COUCHBASE_HOST"))
+        print(os.getenv("COUCHBASE_USER"))
+        self.dao = PlaceDAO(
+            host=os.getenv("COUCHBASE_HOST"),
+            user=os.getenv("COUCHBASE_USER"),
+            password=os.getenv("COUCHBASE_PASSWORD"),
+            bucket=os.getenv("COUCHBASE_BUCKET")
+        )
 
     def get_site_details(self, site_id: str) -> PlaceDTO:
         data = self.dao.get_by_id(site_id)
