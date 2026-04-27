@@ -7,10 +7,12 @@ from dotenv import load_dotenv #variables de entorno
 #Variables de entorno
 load_dotenv()
 
-COUCH_URL = os.getenv("COUCHDB_URL")
-DB_NAME = os.getenv("COUCHDB_DB")
-USER = os.getenv("COUCHDB_USER")
-PASSWORD = os.getenv("COUCHDB_PASSWORD")
+COUCH_URL = os.getenv("COUCHBASE_URL")
+DB_NAME = os.getenv("COUCHBASE_USER")
+USER = os.getenv("COUCHBASE_USER")
+PASSWORD = os.getenv("COUCHBASE_PASSWORD")
+COUCHBASE_HOST = os.getenv("COUCHBASE_HOST")
+BUCKET = os.getenv("COUCHBASE_BUCKET")
 
 BATCH_SIZE = int(os.getenv("BATCH_SIZE", 1000))
 
@@ -347,6 +349,7 @@ FILES = [
 # ==============================
 
 auth = HTTPBasicAuth(USER, PASSWORD)
+print(f"🔐 Conectando a CouchDB en {COUCH_URL} con usuario '{USER}'")
 
 """
 Borra las base de dayos creadas, limpiando el conjunto de datos
@@ -404,18 +407,34 @@ def load_geojson(file_path, tipo):
 Envia los documentos al servidor de couchDB en bulk, conjunto de documentos
 """
 def bulk_insert(docs):
-    url = f"{COUCH_URL}/{DB_NAME}/_bulk_docs"
 
     for i in range(0, len(docs), BATCH_SIZE):
         batch = docs[i:i+BATCH_SIZE]
 
         print(f"📤 Insertando batch {i} - {i+len(batch)}")
 
-        res = requests.post(url, json={"docs": batch}, auth=auth)
+        for doc in batch:
+            key = doc["_id"]
 
-        if res.status_code not in [201, 202]:
-            print("❌ Error:", res.text)
-            return
+            statement = f"""
+            INSERT INTO `places` (KEY, VALUE)
+            VALUES ("{key}", {json.dumps(doc)})
+            """
+
+            res = requests.post(
+                "http://localhost:8093/query/service",
+                auth=(USER, PASSWORD),
+                headers={
+                    "Content-Type": "application/json"
+                },
+                json={
+                    "statement": statement
+                }
+            )
+
+            if res.status_code not in [200, 201]:
+                print("❌ Error:", res.text)
+                return
 
     print("✅ Todos los documentos insertados")
 
@@ -424,7 +443,7 @@ def bulk_insert(docs):
 # ==============================
 
 def main():
-    recreate_db()
+    #recreate_db()
 
     all_docs = []
 
