@@ -8,12 +8,6 @@ from dotenv import load_dotenv
 # CONFIG
 # =========================
 load_dotenv()
-<<<<<<< HEAD
-COUCH_URL = os.getenv("COUCHDB_URL")
-DB_NAME = os.getenv("COUCHDB_DB")
-USER = os.getenv("COUCHDB_USER")
-PASSWORD = os.getenv("COUCHDB_PASSWORD")
-=======
 
 COUCH_URL = os.getenv("COUCHBASE_URL")
 DB_NAME = os.getenv("COUCHBASE_USER")
@@ -21,7 +15,6 @@ USER = os.getenv("COUCHBASE_USER")
 PASSWORD = os.getenv("COUCHBASE_PASSWORD")
 COUCHBASE_HOST = os.getenv("COUCHBASE_HOST")
 BUCKET = os.getenv("COUCHBASE_BUCKET")
->>>>>>> ada
 
 BATCH_SIZE = int(os.getenv("BATCH_SIZE", 1000))
 
@@ -358,8 +351,6 @@ FILES = [
 # ==============================
 # 1. LIMPIAMOS BASE DE DATOS
 # ==============================
-<<<<<<< HEAD
-=======
 
 auth = HTTPBasicAuth(USER, PASSWORD)
 print(f"🔐 Conectando a CouchDB en {COUCH_URL} con usuario '{USER}'")
@@ -367,7 +358,6 @@ print(f"🔐 Conectando a CouchDB en {COUCH_URL} con usuario '{USER}'")
 """
 Borra las base de dayos creadas, limpiando el conjunto de datos
 """
->>>>>>> ada
 def recreate_db():
     print("🔄 Reiniciando base de datos...")
     
@@ -421,25 +411,19 @@ def load_geojson(file_path, tipo):
 # 3. AÑADIR DOCS EN BULK A COUCH
 # ===============================
 def bulk_insert(docs):
-<<<<<<< HEAD
+
     #Rutas de peticiones bulk
     url = f"{COUCH_URL}/{DB_NAME}/_bulk_docs"
     #Bucle de documentos con maximo
-=======
-
->>>>>>> ada
+    # 
     for i in range(0, len(docs), BATCH_SIZE):
         batch = docs[i:i+BATCH_SIZE]
 
         print(f"📤 Insertando batch {i} - {i+len(batch)}")
-<<<<<<< HEAD
-        res = requests.post(url, json={"docs": batch}, auth=auth)
-=======
+
 
         for doc in batch:
             key = doc["_id"]
->>>>>>> ada
-
             statement = f"""
             INSERT INTO `places` (KEY, VALUE)
             VALUES ("{key}", {json.dumps(doc)})
