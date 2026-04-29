@@ -1,0 +1,686 @@
+{
+	"info": {
+		"_postman_id": "d4f0372a-b984-4bf9-a2aa-78d85bcda4f4",
+		"name": "DiverEx API",
+		"description": "Colección base para probar la API DiverEx",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "43874077"
+	},
+	"item": [
+		{
+			"name": "Usuarios",
+			"item": [
+				{
+					"name": "Crear usuario",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Manuel\",\n  \"email\": \"manuel@test.com\",\n  \"password\": \"1234\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/usuarios/signup",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"usuarios",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener usuario",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"manuel@test.com\",\r\n  \"password\": \"1234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/usuarios/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"usuarios",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Borra user",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/usuarios/65508d7f-0d98-4272-9026-6132a2fd0222",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"usuarios",
+								"65508d7f-0d98-4272-9026-6132a2fd0222"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Visita",
+			"item": [
+				{
+					"name": "Crear visita",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user_id\": \"1\",\n  \"lugar_id\": \"lonjas_1\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/visitas",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"visitas"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener visitas",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"manuel@test.com\",\r\n  \"password\": \"1234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/visitas/{{user_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"visitas",
+								"{{user_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Borra visita",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"user_id\": \"1\",\r\n  \"lugar_id\": \"lonjas_1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/visitas",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"visitas"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Favorito",
+			"item": [
+				{
+					"name": "Crear favorito",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user_id\": \"1\",\n  \"lugar_id\": \"lonjas_1\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/favoritos/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"favoritos",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener favoritos",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"manuel@test.com\",\r\n  \"password\": \"1234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/favoritos/{{user_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"favoritos",
+								"{{user_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Borra visita",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"user_id\": \"1\",\r\n  \"lugar_id\": \"lonjas_1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/favoritos",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"favoritos"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Me gusta",
+			"item": [
+				{
+					"name": "Dar me gusta",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user_id\": \"1\",\n  \"lugar_id\": \"lonjas_1\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/likes/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"likes",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener me gustas",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"manuel@test.com\",\r\n  \"password\": \"1234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/likes/{{user_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"likes",
+								"{{user_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Quitar me gusta",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"user_id\": \"1\",\r\n  \"lugar_id\": \"lonjas_1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/likes",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"likes"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Lugares",
+			"item": [
+				{
+					"name": "Crear lugar (Parque)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": \"lonjas_t1\",\n  \"tipo\": \"Lonja\",\n  \"name\": \"Parque Central\",\n  \"codigo\": \"018\",\n  \"estado\": \"activo\",\n  \"accesible\": true,\n  \"tipo_detalle\": \"PU\",\n  \"agua\": true,\n  \"electricidad\": true,\n  \"comedor\": false,\n  \"juegos\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/lugares",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"lugares"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar lugar (Parque)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": \"parques_t1\",\n  \"tipo\": \"Parque\",\n  \"name\": \"Parque Central\",\n  \"codigo\": \"018\",\n  \"estado\": \"M\",\n  \"accesible\": false,\n  \"tipo_detalle\": \"PU\",\n  \"agua\": true,\n  \"electricidad\": true,\n  \"comedor\": false,\n  \"juegos\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/lugares/parques_t1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"lugares",
+								"parques_t1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener todos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/lugares",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"lugares"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener uno",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/lugares/{{lugar_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"lugares",
+								"{{lugar_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener uno Copy",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/lugares/lonjas_t1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"lugares",
+								"lonjas_t1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Comentarios",
+			"item": [
+				{
+					"name": "Crear comentario",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user_id\": \"{{user_id}}\",\n  \"lugar_id\": \"{{lugar_id}}\",\n  \"mensaje\": \"Algo cutre\",\n  \"ranking\": 3\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/comentarios",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"comentarios"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar comentario",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user_id\": \"{{user_id}}\",\n  \"lugar_id\": \"{{lugar_id}}\",\n  \"mensaje\": \"Algo cutre\",\n  \"ranking\": 3\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/comentarios",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"comentarios"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Comentarios de lugar",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/comentarios/lugar/{{lugar_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"comentarios",
+								"lugar",
+								"{{lugar_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Comentarios de usuario",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/comentarios/usuario/{{user_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"comentarios",
+								"usuario",
+								"{{user_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Preferencias",
+			"item": [
+				{
+					"name": "Recomendaciones",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/preferencias/recomendaciones/{{user_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"preferencias",
+								"recomendaciones",
+								"{{user_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Recomendaciones filtradas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/preferencias/recomendaciones-filtradas/{{user_id}}?estado=M&accesible=true",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"preferencias",
+								"recomendaciones-filtradas",
+								"{{user_id}}"
+							],
+							"query": [
+								{
+									"key": "estado",
+									"value": "M"
+								},
+								{
+									"key": "accesible",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Top lugares",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/preferencias/top?codigo_municipio=06001&tipo=Parque",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"preferencias",
+								"top"
+							],
+							"query": [
+								{
+									"key": "codigo_municipio",
+									"value": "06001"
+								},
+								{
+									"key": "tipo",
+									"value": "Parque"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://127.0.0.1:8000"
+		},
+		{
+			"key": "user_id",
+			"value": "1"
+		},
+		{
+			"key": "lugar_id",
+			"value": "lonjas_1"
+		}
+	]
+}

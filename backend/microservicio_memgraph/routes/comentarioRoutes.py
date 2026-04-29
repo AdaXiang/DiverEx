@@ -9,7 +9,7 @@ from microservicio_memgraph.services.comentarioService import (
     removeComentario
 )
 
-router = APIRouter()
+router = APIRouter(tags=["Comentario"])
 
 # ==============================
 # CREAR / EDITAR COMENTARIO
@@ -45,8 +45,12 @@ def comentariosUsuario(user_id: str):
 # COMENTARIOS DE LUGAR
 # ==============================
 @router.get("/lugar/{lugar_id}", status_code=status.HTTP_200_OK)
-def comentariosLugar(lugar_id: str,data: dict):
-    return getComentariosLugar(lugar_id,data.get("ranking_min"),data.get("ranking_max"))
+def comentariosLugar(
+    lugar_id: str,
+    ranking_min: int | None = None,
+    ranking_max: int | None = None
+):
+    return getComentariosLugar(lugar_id, ranking_min, ranking_max)
 
 
 # ==============================

@@ -8,7 +8,28 @@ from microservicio_memgraph.routes.preferenciasRoutes import router as preferenc
 from microservicio_memgraph.routes.lugarRoutes import router as lugarRouter
 
 #Inicializar la api
-app = FastAPI()
+app = FastAPI(
+    title="DiverEx API",
+    description="""
+API para gestión de usuarios y recomendaciones de lugares.
+
+## Funcionalidades
+- 👤 Usuarios
+- 📍 Lugares (Parques / Lonjas)
+- ❤️ Likes, favoritos y visitas
+- 💬 Comentarios con ranking
+- 🤖 Recomendaciones personalizadas
+
+## Notas
+- Los lugares tienen media de valoración y número de likes
+- Se pueden filtrar las recomendaciones por múltiples atributos
+""",
+    version="1.0.0",
+    contact={
+        "name": "Manuel Solis Gómez",
+        "email": "masogo008@gmail.com"
+    }
+)
 
 # Endpoint básico
 @app.get("/")

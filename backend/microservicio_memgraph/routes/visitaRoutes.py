@@ -8,7 +8,7 @@ from microservicio_memgraph.services.visitaService import (
     removeVisita
 )
 
-router = APIRouter()
+router = APIRouter(tags=["Visitas"])
 
 # ==============================
 # VISITAR LUGAR

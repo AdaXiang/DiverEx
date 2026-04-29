@@ -24,8 +24,6 @@ def mapLugar(l):
 # Crear lugar
 # ==============================
 def addLugar(data):
-    data["id"] = f"{data.get('tipo')}_{uuid.uuid4()}"
-
     result = createLugar(data)
 
     if not result:

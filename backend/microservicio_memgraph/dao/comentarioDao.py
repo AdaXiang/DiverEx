@@ -24,9 +24,9 @@ def upsertComentario(user_id, lugar_id, mensaje, ranking):
     MERGE (u)-[:ESCRIBE]->(c)
     MERGE (c)-[:SOBRE]->(l)
 
-    WITH l
+    WITH c,l
     MATCH (l)<-[:SOBRE]-(c2:Comentario)
-    WITH l, AVG(c2.ranking) AS media
+    WITH c,l, AVG(c2.ranking) AS media
     SET l.media = media
 
     RETURN c,l

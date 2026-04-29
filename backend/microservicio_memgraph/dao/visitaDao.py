@@ -11,7 +11,7 @@ def createVisita(user_id, lugar_id):
     query = """
     MATCH (u:Usuario {id: $uid})
     MATCH (l:Lugar {id: $lid})
-    MERGE (u)-[:VISITA]->(l)
+    MERGE (u)-[r:VISITA]->(l)
     ON CREATE SET r.fecha = datetime()
     RETURN l
     """

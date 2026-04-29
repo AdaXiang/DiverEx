@@ -8,7 +8,7 @@ from microservicio_memgraph.services.favoritoService import (
     removeFavorito
 )
 
-router = APIRouter()
+router = APIRouter(tags=["Favorito"])
 
 # ==============================
 # FAVORITO LUGAR

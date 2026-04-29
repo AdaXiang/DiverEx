@@ -47,18 +47,17 @@ def deleteMeGusta(user_id, lugar_id):
     query = """
     MATCH (u:Usuario {id: $uid})-[r:ME_GUSTA]->(l:Lugar {id: $lid})
     DELETE r
-    
-    WITH l
+
+    WITH l, count(*) AS deleted
+
     OPTIONAL MATCH (l)<-[r2:ME_GUSTA]-()
-    WITH l, count(r2) AS total
+    WITH l, deleted, count(r2) AS total
     SET l.likes = total
-    
-    RETURN count(r) AS deleted
+
+    RETURN deleted
     """
 
-    result = run_query(query, {
+    return run_query(query, {
         "uid": user_id,
         "lid": lugar_id
     })
-
-    return result

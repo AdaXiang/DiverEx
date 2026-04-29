@@ -4,7 +4,7 @@
 from fastapi import APIRouter, HTTPException, status
 from microservicio_memgraph.services.preferenciasService import *
 
-router = APIRouter()
+router = APIRouter(tags=["Preferencias"])
 
 # ==============================
 # RECOMENDACIONES

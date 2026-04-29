@@ -8,7 +8,7 @@ from microservicio_memgraph.services.meGustaService import (
     removeMeGusta
 )
 
-router = APIRouter()
+router = APIRouter(tags=["Me gusta"])
 
 # ==============================
 # DAR LIKE

@@ -9,7 +9,7 @@ from microservicio_memgraph.services.usuarioService import (
 )
 
 #Routas de api
-router = APIRouter()
+router = APIRouter(tags=["Usuarios"])
 
 # ==============================
 # LOGIN DE USUARIO

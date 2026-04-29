@@ -4,7 +4,7 @@
 from fastapi import APIRouter, HTTPException, status
 from microservicio_memgraph.services.lugarService import *
 
-router = APIRouter()
+router = APIRouter(tags=["Lugar"])
 
 # ==============================
 # CREAR LUGAR
@@ -15,7 +15,7 @@ def createLugarRoute(data: dict):
     if data["tipo"] not in ["Parque", "Lonja"]:
         raise HTTPException(400, "Tipo inválido")
     
-    required_fields = ["tipo", "name", "codigo", "estado", "accesible", "tipo_detalle"]
+    required_fields = ["id", "tipo", "name", "codigo", "estado", "accesible", "tipo_detalle"]
 
     for field in required_fields:
         if field not in data:
