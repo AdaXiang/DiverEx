@@ -1,25 +1,64 @@
-from typing import Optional
-
-import couchdb
+import requests
+from typing import Optional, List, Dict
 
 class PlaceDAO:
-    def __init__(self):
-        self.server = couchdb.Server("COUCHDB_URL_AUTH") 
-        self.db = self.server["geojson"]
+    def __init__(self, host, user, password, bucket):
+        self.url = f"http://{host}:8093/query/service"
+        self.auth = (user, password)
+        self.bucket = bucket
 
+    # -----------------------------
+    # Ejecutar query base
+    # -----------------------------
+    def _execute(self, statement: str) -> List[Dict]:
+        res = requests.post(
+            self.url,
+            auth=self.auth,
+            json={"statement": statement},
+            headers={"Content-Type": "application/json"}
+        )
+
+        if res.status_code != 200:
+            raise Exception(f"Couchbase error: {res.text}")
+
+        return res.json().get("results", [])
+
+    # -----------------------------
+    # Obtener por ID (KEY real)
+    # -----------------------------
     def get_by_id(self, doc_id: str):
-        return self.db.get(doc_id)
+        query = f"""
+        SELECT META(t).id AS id, t.*
+        FROM `{self.bucket}` t
+        USE KEYS "{doc_id}"
+        """
+        results = self._execute(query)
+        return results[0] if results else None
 
+    # -----------------------------
+    # Filtrar por dataset
+    # -----------------------------
     def get_by_dataset(self, dataset_type: str):
-        # Mango Query de CouchDB
-        query = {"selector": {"dataset": dataset_type}}
-        return [doc for doc in self.db.find(query)]
-    
+        query = f"""
+        SELECT META(t).id AS id, t.*
+        FROM `{self.bucket}` t
+        WHERE t.dataset = "{dataset_type}"
+        """
+        return self._execute(query)
+
+    # -----------------------------
+    # Listar todo (con filtro opcional)
+    # -----------------------------
     def list_all(self, dataset: Optional[str] = None):
         if dataset:
-            # Consulta tipo Mango (CouchDB Query)
-            query = {"selector": {"dataset": dataset}}
-            return [doc for doc in self.db.find(query)]
+            query = f"""
+            SELECT META(t).id AS id, t.*
+            FROM `{self.bucket}` t
+            WHERE t.dataset = "{dataset}"
+            """
         else:
-            # Retorna todos los documentos saltando los de diseño (_design/...)
-            return [self.db[doc_id] for doc_id in self.db if not doc_id.startswith('_design')]
+            query = f"""
+            SELECT META(t).id AS id, t.*
+            FROM `{self.bucket}` t
+            """
+        return self._execute(query)

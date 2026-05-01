@@ -341,6 +341,55 @@ municipios = {
     "903": "Guadiana",
 }
 
+# =========================
+# UTILIDADES
+# =========================
+def calcular_centroide(geometry: dict):
+    """
+    Calcula un punto representativo (lat, lon)
+    a partir de una geometría GeoJSON (Polygon o MultiPolygon).
+    """
+
+    coords = geometry.get("coordinates", [])
+
+    all_points = []
+
+    # Detectar tipo
+    geom_type = geometry.get("type")
+
+    if geom_type == "Polygon":
+        # coords: [ [ [lon, lat], ... ] ]
+        for ring in coords:
+            for point in ring:
+                all_points.append(point)
+
+    elif geom_type == "MultiPolygon":
+        # coords: [ [ [ [lon, lat] ] ] ]
+        for polygon in coords:
+            for ring in polygon:
+                for point in ring:
+                    all_points.append(point)
+
+    else:
+        return None  # o lanzar error
+
+    if not all_points:
+        return None
+
+    # Promedio simple
+    lon = sum(p[0] for p in all_points) / len(all_points)
+    lat = sum(p[1] for p in all_points) / len(all_points)
+
+    return {
+        "lat": lat,
+        "lon": lon
+    }
+
+def to_bool(value):
+    if not value:
+        return False
+    return str(value).lower() == "si"
+
 # Archivos GeoJSON
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FILES = [
@@ -387,15 +436,18 @@ def load_geojson(file_path, tipo):
     docs = []
     for i, feature in enumerate(data["features"]):
         props = feature.get("properties", {})
+        props["acceso_silla_ruedas"] = to_bool(props.get("acceso_silla_ruedas"))
         geom = feature.get("geometry", {})
         codigo = props.get("codigo_municipio")
         nombre_municipio = municipios.get(codigo, "Desconocido")
+        geo_point = calcular_centroide(geom)
 
         doc = {
             "_id": f"{tipo}_{i}",
             "type": "feature",
             "dataset": tipo,
             "geometry": geom,
+            "geo_point": geo_point,
             "properties": {
                 **props,
                 "municipio_nombre": nombre_municipio #añadir el nombre del municipio
