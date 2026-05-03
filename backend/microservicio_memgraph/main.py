@@ -6,6 +6,7 @@ from microservicio_memgraph.routes.meGustaRoutes import router as meGustaRouter
 from microservicio_memgraph.routes.comentarioRoutes import router as comentarioRouter
 from microservicio_memgraph.routes.preferenciasRoutes import router as preferenciaRouter
 from microservicio_memgraph.routes.lugarRoutes import router as lugarRouter
+from fastapi.middleware.cors import CORSMiddleware
 
 #Inicializar la api
 app = FastAPI(
@@ -29,6 +30,20 @@ API para gestión de usuarios y recomendaciones de lugares.
         "name": "Manuel Solis Gómez",
         "email": "masogo008@gmail.com"
     }
+)
+
+#CORS
+origins = [
+    "http://localhost:3333",
+    "http://127.0.0.1:3333",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Endpoint básico
