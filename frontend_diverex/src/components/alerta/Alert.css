@@ -1,0 +1,65 @@
+/* contenedor base */
+.alert {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+
+  width: 20rem;
+  max-width: 90%;
+
+  padding: 1rem;
+  border-radius: 0.5rem;
+
+  color: white;
+  box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.2);
+
+  animation: slideIn 0.3s ease;
+  z-index: 9999;
+}
+
+/* tipos */
+.alert.error {
+  background-color: #d32f2f;
+}
+
+.alert.warning {
+  background-color: #f9a825;
+  color: black;
+}
+
+.alert.success {
+  background-color: #2e7d32;
+}
+
+/* header */
+.alert-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* botón cerrar */
+.alert button {
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+/* texto */
+.alert p {
+  margin: 0.5rem 0 0 0;
+}
+
+/* animación */
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}

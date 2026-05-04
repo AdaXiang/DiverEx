@@ -1,0 +1,88 @@
+#userPanel {
+  width: 18rem;
+  max-width: 90%;
+
+  margin: 1rem;
+  padding: 1rem;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(6px);
+
+  border-radius: var(--border-radius);
+  box-shadow: 0 0.5rem 1.5rem rgba(0,0,0,0.2);
+}
+
+/* info usuario */
+.user-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.user-name {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+/* botón logout */
+.logout-btn {
+  padding: 0.5rem;
+  border-radius: 0.3rem;
+
+  border: none;
+  cursor: pointer;
+
+  background-color: var(--color-primary) !important;
+  color: var(--color-white) !important;
+
+  transition: 0.2s;
+}
+
+.logout-btn:hover {
+  background-color: var(--color-primary-dark) !important;
+}
+
+.menu {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.menu button {
+  flex: 1;
+  padding: 0.4rem;
+
+  border: none;
+  border-radius: 0.3rem;
+
+  background: var(--color-secondary);
+  color: white;
+
+  cursor: pointer;
+}
+
+.menu button.active {
+  background: var(--color-primary);
+}
+
+.delete-btn {
+  padding: 0.5rem;
+  border-radius: 0.3rem;
+
+  border: none !important;
+  cursor: pointer !important;
+
+  background-color: rgba(244, 67, 54, 0.2) !important;
+  color: #c62828 !important;
+
+  transition: 0.2s;
+}
+
+.delete-btn:hover {
+  background-color: rgba(244, 67, 54, 0.35) !important;
+}

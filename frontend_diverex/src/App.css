@@ -7,6 +7,26 @@
   pointer-events: none;
 }
 
+#panelFlotante{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: auto;
+  height: 100%;
+  background-color: #ffffff;
+  z-index: 9999;
+}
+
+#panelFlotanteDos{
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: auto;
+  height: 100%;
+  background-color: #ffffff;
+  z-index: 9999;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
