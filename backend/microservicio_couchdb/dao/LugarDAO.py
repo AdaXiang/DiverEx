@@ -1,7 +1,7 @@
 import requests
 from typing import Optional, List, Dict
 
-class PlaceDAO:
+class LugarDAO:
     def __init__(self, host, user, password, bucket):
         self.url = f"http://{host}:8093/query/service"
         self.auth = (user, password)

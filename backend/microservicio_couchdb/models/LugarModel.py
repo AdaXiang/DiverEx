@@ -5,7 +5,7 @@ class GeometryModel(BaseModel):
     type: str
     coordinates: List[Any]  # MultiPolygon usa listas anidadas complejas
 
-class FeatureModel(BaseModel):
+class LugarModel(BaseModel):
     id: str = Field(alias="_id")
     rev: Optional[str] = Field(None, alias="_rev")
     type: str

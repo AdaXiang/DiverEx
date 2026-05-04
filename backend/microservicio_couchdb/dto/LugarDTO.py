@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional
 
-class PlaceDTO(BaseModel):
+class LugarDTO(BaseModel):
     id: str
     nombre: str
     dataset: str

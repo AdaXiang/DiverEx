@@ -1,8 +1,8 @@
 from fastapi import FastAPI #Api para operaciones backend
 from dotenv import load_dotenv #Seguridad de variables de entorno
 from fastapi.middleware.cors import CORSMiddleware
-from routes.placeRoutes import router as place_router
-import os #Trabajar con rutas 
+from routes.LugarRoutes import router as place_router
+import os 
 
 #Variables entorno
 load_dotenv()
