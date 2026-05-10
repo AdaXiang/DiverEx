@@ -65,6 +65,7 @@ class LugarService:
         
         for item in raw_data:
             props = item.get("properties", {})
+            geo_point = item.get("geo_point", {})  # Extraemos el punto central
             
             # Creamos el DTO asegurándonos de que CADA nombre coincida con el DTO
             dto = LugarDTO(
@@ -88,12 +89,43 @@ class LugarService:
                 electricidad=props.get("electricidad"),
                 comedor=props.get("comedor"),
                 juegos_infantiles=props.get("juegos_infantiles"),
-                otras_prestaciones=props.get("otras_prestaciones")
-
+                otras_prestaciones=props.get("otras_prestaciones"),
+                lat=geo_point.get("lat"),  # Extraemos lat del geo_point
+                lon=geo_point.get("lon"),  # Extraemos lon del geo_point
+                geometry=item.get("geometry") 
             )
             results.append(dto)
         return results
     
+    def get_all_places_as_geojson(self, category: Optional[str] = None):
+        places = self.get_all_places(category)  # reutilizas lo que ya tienes
+        
+        return {
+            "type": "FeatureCollection",
+            "features": [
+                {
+                    "type": "Feature",
+                    "geometry": place.geometry,
+                    "properties": {
+                        "id": place.id,
+                        "nombre": place.nombre,
+                        "municipio": place.municipio,
+                        "dataset": place.dataset,
+                        "estado": place.estado,
+                        "acceso_silla_ruedas": place.acceso_silla_ruedas,
+                        "superficie_solar": place.superficie_solar,
+                        "superficie_aire": place.superficie_aire,
+                        "tipo_lonja": place.tipo_lonja,
+                        "tipo_parque": place.tipo_parque,
+                        "agua": place.agua,
+                        "electricidad": place.electricidad,
+                        "juegos_infantiles": place.juegos_infantiles,
+                    }
+                }
+                for place in places
+            ]
+        }
+        
     # Método de búsqueda avanzada con filtros dinámicos
     def search_places(self, filters: dict):
         raw_data = self.dao.search(filters)

@@ -1,0 +1,18 @@
+{
+    "tipo_parque": {
+        "PU": "Parque urbano",
+        "PN": "Parque no urbano",
+        "PI": "Parque infantil (con uso infantil sólo)",
+        "JA": "Jardines",
+        "AN": "Áreas de la naturaleza",
+        "RF": "Refugios de pesca y de montaña",
+        "CA": "Campamentos",
+        "ZR": "Zonas recreativas naturales",
+        "OT": "Otros"
+    },
+    "tipo_lonja": {
+        "LO": "Lonja",
+        "ME": "Mercado",
+        "FE": "Feria"
+    }
+}

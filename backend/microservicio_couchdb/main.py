@@ -6,7 +6,6 @@ import os
 
 #Variables entorno
 load_dotenv()
-COUCHDB_URL = os.getenv("COUCHDB_URL") #Prueba de que va bien las variables de entorno
 
 #Inicializar la api
 app = FastAPI(
@@ -26,7 +25,7 @@ app.add_middleware(
 )
 
 # Inclusión de rutas
-# El 'prefix' ayuda a organizar la URL, ej: http://localhost:8000/api/sitio/...
+# El 'prefix' ayuda a organizar la URL, ej: http://localhost:8001/api/sitio/...
 app.include_router(place_router, prefix="/api", tags=["Sitios"])
 
 # Endpoint básico

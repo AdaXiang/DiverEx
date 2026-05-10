@@ -1,0 +1,56 @@
+/* Contenedor principal estático */
+.filtros-panel-estatico {
+    width: 100%;
+    background-color: white;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+/* Estilos internos de los filtros (igual que antes) */
+.filtros-panel-estatico h2 {
+    margin: 0;
+    color: #1f2937;
+    font-size: 24px;
+    border-bottom: 2px solid #e5e7eb;
+    padding-bottom: 10px;
+}
+
+.filtro-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+    color: #4b5563;
+    cursor: pointer;
+}
+
+.filtro-item input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.filtro-grupo {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.filtro-grupo label {
+    font-size: 16px;
+    color: #4b5563;
+}
+
+.filtro-grupo input[type="range"] {
+    width: 100%;
+    cursor: pointer;
+}
+
+.mensaje-error {
+    color: #dc2626;
+    font-size: 13px;
+    font-weight: 500;
+}

@@ -6,20 +6,29 @@ from dto.LugarDTO import LugarDTO
 router = APIRouter()
 service = LugarService()
 
-@router.get("/sitio/{site_id}", response_model=LugarDTO)
-async def read_site(site_id: str):
-    site = service.get_site_details(site_id)
-    print(type(site))
-    if not site:
-        raise HTTPException(status_code=404, detail="Sitio no encontrado")
-    return site.model_dump(exclude_none=True)
-
-@router.get("/lugares", response_model=List[LugarDTO])
-async def get_lugares(dataset: Optional[str] = Query(None, description="Filtrar por 'parques' o 'lonjas'")):
-    """
-    Retorna la lista entera de sitios de interés en la provincia de Badajoz.
-    """
-    return service.get_all_places(dataset)
+# Función para convertir una lista de DTOs a GeoJSON
+def to_geojson(items):
+    features = []
+    
+    for item in items:
+        if hasattr(item, "model_dump"):
+            data = item.model_dump(exclude_none=True)
+        else:
+            data = {k: v for k, v in item.items() if v is not None}
+        
+        geometry = data.pop("geometry", None)
+        
+        feature = {
+            "type": "Feature",
+            "geometry": geometry,
+            "properties": data
+        }
+        features.append(feature)
+        
+    return {
+        "type": "FeatureCollection",
+        "features": features
+    }
 
 @router.get("/lugares/filtrar", response_model=List[LugarDTO])
 async def filter_lugares(
@@ -71,3 +80,18 @@ async def delete_lugar(site_id: str):
         raise HTTPException(status_code=404, detail="Sitio no encontrado para eliminar")
     return {"detail": "Sitio eliminado exitosamente"}
 
+@router.get("/lugares")
+async def get_lugares(dataset: Optional[str] = Query(None, description="Filtrar por 'parques' o 'lonjas'")):
+    """
+    Retorna la lista entera de sitios de interés en la provincia de Badajoz.
+    """
+    items = service.get_all_places(dataset)
+    return to_geojson(items)
+
+@router.get("/sitio/{site_id}", response_model=LugarDTO)
+async def read_site(site_id: str):
+    site = service.get_site_details(site_id)
+    print(type(site))
+    if not site:
+        raise HTTPException(status_code=404, detail="Sitio no encontrado")
+    return site.model_dump(exclude_none=True)
