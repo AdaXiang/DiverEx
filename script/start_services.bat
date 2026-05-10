@@ -44,16 +44,33 @@ IF %ERRORLEVEL% NEQ 0 (
 
 echo ✅ Entorno activado
 
-
 REM ===============================
 REM 3. ETL
 REM ===============================
 echo.
 echo 📊 Ejecutando ETL...
 
+cd /d "%BASE_DIR%\db\memgraph"
+
+type init.cypher | docker exec -i memgraph-mage mgconsole
+
+IF %ERRORLEVEL% NEQ 0 (
+    echo Error ejecutando init.cypher
+    pause
+    exit /b
+)
+
 cd /d "%BASE_DIR%\etl"
 
 python importGeoJson_Memgraph.py
+
+IF %ERRORLEVEL% NEQ 0 (
+    echo ❌ Error en ETL
+    pause
+    exit /b
+)
+
+python importGeoJson_CouchDB.py
 
 IF %ERRORLEVEL% NEQ 0 (
     echo ❌ Error en ETL
@@ -72,7 +89,8 @@ echo 🌐 Iniciando FastAPI...
 
 cd /d "%BASE_DIR%\backend"
 
-start cmd /k "%BASE_DIR%\script\backend.bat"
+start cmd /k "%BASE_DIR%\script\backend_memgraph.bat"
+start cmd /k "%BASE_DIR%\script\backend_couchdb.bat"
 
 echo ⏳ Esperando backend...
 timeout /t 5 >nul

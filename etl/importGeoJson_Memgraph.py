@@ -62,7 +62,9 @@ def load_geojson(file_path, tipo):
             l.codigo_municipio = $codigo,
             l.estado = $estado,
             l.acceso_silla_ruedas = $acceso,
-            l.tipo = $tipo
+            l.tipo = $tipo,
+            l.likes = 0,
+            l.media = 0
         """
 
         params = {
@@ -185,6 +187,45 @@ def create_comments():
             })
 
     print("✅ Comentarios creados")
+    
+# =========================
+# 5. RECALCULAR LIKES
+# =========================
+def update_likes():
+    print("👍 Recalculando likes...")
+
+    query = """
+    MATCH (l:Lugar)
+
+    OPTIONAL MATCH (l)<-[r:ME_GUSTA]-()
+
+    WITH l, count(r) AS total
+    SET l.likes = total
+    """
+
+    run_query(query)
+
+    print("✅ Likes actualizados")
+
+
+# =========================
+# 6. RECALCULAR MEDIA
+# =========================
+def update_media():
+    print("⭐ Recalculando medias...")
+
+    query = """
+    MATCH (l:Lugar)
+
+    OPTIONAL MATCH (l)<-[:SOBRE]-(c:Comentario)
+
+    WITH l, AVG(c.ranking) AS media
+    SET l.media = coalesce(media, 0)
+    """
+
+    run_query(query)
+
+    print("✅ Medias actualizadas")
 
 # =========================
 # MAIN
@@ -199,6 +240,9 @@ def main():
     create_users(n_users)
     create_random_relations(n_users)
     create_comments()
+
+    update_likes()
+    update_media()
 
     print("🎉 ETL MEMGRAPH COMPLETADO 🎉")
 
