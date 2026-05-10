@@ -45,7 +45,7 @@ function MainLayout() {
         {lugarId && <LugarCard lugarId={lugarId} setAlert={setAlertData} showComment={showComment} setShowComment={setShowComment} onClose={() => setLugarId(null)} />}
 
         {/* Panel muetra los comentarios */}
-        {showComment && <ComentariosPanel lugarId={lugarId} setAlert={setAlertData} />}
+        {showComment && lugarId && <ComentariosPanel lugarId={lugarId} setAlert={setAlertData} />}
       </div>
     </div>
   );
