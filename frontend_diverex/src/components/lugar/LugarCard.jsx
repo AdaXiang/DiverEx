@@ -8,9 +8,7 @@ import { getLikes, like, unlike } from "../../apiServices/likes";
 import { getFavorites, addFavorite, removeFavorite } from "../../apiServices/favorites";
 import { getVisits, createVisit, deleteVisit } from "../../apiServices/visits";
 
-import ComentariosPanel from "../comentarios/ComentariosPanel"
-
-export default function LugarCard({ lugarId, onClose, setAlert }) {
+export default function LugarCard({ lugarId, onClose, setAlert, showComment, setShowComment }) {
   const { user } = useContext(AuthContext);
 
   const [lugar, setLugar] = useState(null);
@@ -18,8 +16,6 @@ export default function LugarCard({ lugarId, onClose, setAlert }) {
   const [liked, setLiked] = useState(false);
   const [favorite, setFavorite] = useState(false);
   const [visited, setVisited] = useState(false);
-
-  const [showComentarios, setShowComentarios] = useState(false);
 
     const tipoMap = {
         ME: "Mercado",
@@ -158,18 +154,16 @@ export default function LugarCard({ lugarId, onClose, setAlert }) {
           </button>
         </div>
 
-        
-        {!showComentarios && (
-            <button className="comentarios-btn" onClick={() => setShowComentarios(true)}>
-                Ver comentarios
+        {!showComment && (
+            <button className="comentarios-btn" onClick={() => setShowComment(true)}>
+                Ver comentarios ⬇️
             </button>
         )}
 
-        {showComentarios && (
-            <ComentariosPanel
-                lugarId={lugarId}
-                onClose={() => setShowComentarios(false)}
-            />
+        {showComment && (
+            <button className="comentarios-btn" onClick={() => setShowComment(false)}>
+                Cerrar comentarios ⬆️
+            </button>
         )}
       </div>
     </div>
