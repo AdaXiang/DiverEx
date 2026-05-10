@@ -9,9 +9,10 @@ service = LugarService()
 @router.get("/sitio/{site_id}", response_model=LugarDTO)
 async def read_site(site_id: str):
     site = service.get_site_details(site_id)
+    print(type(site))
     if not site:
         raise HTTPException(status_code=404, detail="Sitio no encontrado")
-    return site
+    return site.model_dump(exclude_none=True)
 
 @router.get("/lugares", response_model=List[LugarDTO])
 async def get_lugares(dataset: Optional[str] = Query(None, description="Filtrar por 'parques' o 'lonjas'")):
@@ -19,3 +20,54 @@ async def get_lugares(dataset: Optional[str] = Query(None, description="Filtrar 
     Retorna la lista entera de sitios de interés en la provincia de Badajoz.
     """
     return service.get_all_places(dataset)
+
+@router.get("/lugares/filtrar", response_model=List[LugarDTO])
+async def filter_lugares(
+    dataset: Optional[str] = Query(None, description="Filtrar por 'parques' o 'lonjas'"),
+    municipio: Optional[str] = Query(None, description="Filtrar por nombre de municipio"),
+    titularidad: Optional[str] = Query(None, description="Filtrar por titularidad"),
+    gestion: Optional[str] = Query(None, description="Filtrar por gestión")
+):
+    """
+    Endpoint avanzado para filtrar sitios por múltiples criterios.
+    """
+    return service.filter_places(dataset, municipio, titularidad, gestion)
+
+@router.get("/lugares/geoespacial", response_model=List[LugarDTO])
+async def geospatial_filter(
+    lat: float = Query(..., description="Latitud del punto central"),
+    lon: float = Query(..., description="Longitud del punto central"),
+    radius: float = Query(1000, description="Radio en metros para el filtro geoespacial")
+):
+    """
+    Endpoint para filtrar sitios dentro de un radio específico desde un punto geográfico.
+    """
+    return service.geospatial_filter(lat, lon, radius)
+
+@router.post("/lugares/", response_model=List[LugarDTO])
+async def create_lugar(lugar: LugarDTO):
+    """
+    Endpoint para crear un nuevo sitio de interés.
+    """
+    return service.create_place(lugar)
+
+@router.put("/lugares/{site_id}", response_model=LugarDTO)
+async def update_lugar(site_id: str, lugar: LugarDTO):
+    """
+    Endpoint para actualizar un sitio de interés existente.
+    """
+    updated_place = service.update_place(site_id, lugar)
+    if not updated_place:
+        raise HTTPException(status_code=404, detail="Sitio no encontrado para actualizar")
+    return updated_place.model_dump(exclude_none=True)
+
+@router.delete("/lugares/{site_id}")
+async def delete_lugar(site_id: str):
+    """
+    Endpoint para eliminar un sitio de interés por su ID.
+    """
+    success = service.delete_place(site_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Sitio no encontrado para eliminar")
+    return {"detail": "Sitio eliminado exitosamente"}
+

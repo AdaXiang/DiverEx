@@ -1,10 +1,30 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import Any, Dict, Optional
 
 class LugarDTO(BaseModel):
     id: str
     nombre: str
     dataset: str
     municipio: str
-    acceso_silla_ruedas: Optional[bool] = "No especificado"
-    # Aquí puedes añadir más campos que quieras exponer siempre
+    codigo_provincia: str
+    codigo_municipio: str
+    estado: str
+    acceso_silla_ruedas: bool
+    titularidad: str
+    gestion: str
+    titularidad: str
+    gestion: str
+    superficie_cubierta: float
+    lat: float
+    lon: float
+    geometry: Dict[str, Any]
+    tipo_lonja: Optional[str] = None
+    superficie_aire: Optional[float] = None
+    superficie_solar: Optional[float] = None
+    tipo_parque: Optional[str] = None
+    agua: Optional[bool] = None
+    saneamiento: Optional[bool] = None
+    electricidad: Optional[bool] = None
+    comedor: Optional[bool] = None
+    juegos_infantiles: Optional[bool] = None
+    otras_prestaciones: Optional[bool] = None

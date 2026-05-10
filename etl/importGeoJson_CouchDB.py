@@ -428,15 +428,28 @@ def recreate_db():
 def load_geojson(file_path, tipo):
     print(f"📂 Procesando {file_path}...")
 
-    #Leemos archivo
     with open(file_path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    #Transformamos un elemento del geoJSON a un JSON
     docs = []
+    # Lista de campos que queremos convertir a bool SOLO si están presentes
+    campos_bool = [
+        "acceso_silla_ruedas", "saneamiento", "agua", 
+        "electricidad", "comedor", "juegos_infantiles", "otras_prestaciones"
+    ]
+
     for i, feature in enumerate(data["features"]):
-        props = feature.get("properties", {})
-        props["acceso_silla_ruedas"] = to_bool(props.get("acceso_silla_ruedas"))
+        # Copia limpia de las propiedades originales
+        props = feature.get("properties", {}).copy()
+        
+        # Procesamos solo los campos que existen en este registro específico
+        for campo in campos_bool:
+            if campo in props and props[campo] is not None:
+                props[campo] = to_bool(props[campo])
+            elif campo in props:
+                # Si el campo existe pero es None, y quieres borrarlo:
+                del props[campo]
+
         geom = feature.get("geometry", {})
         codigo = props.get("codigo_municipio")
         nombre_municipio = municipios.get(codigo, "Desconocido")
@@ -450,7 +463,7 @@ def load_geojson(file_path, tipo):
             "geo_point": geo_point,
             "properties": {
                 **props,
-                "municipio_nombre": nombre_municipio #añadir el nombre del municipio
+                "municipio_nombre": nombre_municipio
             }
         }
 
