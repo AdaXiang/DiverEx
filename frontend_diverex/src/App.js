@@ -6,10 +6,12 @@ import Alert from "./components/alerta/Alert";
 import { AuthProvider, AuthContext } from "./context/AuthContext";
 import { useContext, useState } from "react";
 import LugarCard from "./components/lugar/LugarCard";
+import ComentariosPanel from "./components/comentarios/ComentariosPanel"
 
 function MainLayout() {
   const { user } = useContext(AuthContext);
   const [lugarId, setLugarId] = useState(null);
+  const [showComment, setShowComment] = useState(false);
 
   //estado global de alertas
   const [alertData, setAlertData] = useState(null);
@@ -40,7 +42,10 @@ function MainLayout() {
 
       <div id="panelFlotanteDos">
         {/* Panel si se busca un lugar */}
-        {lugarId && <LugarCard lugarId={lugarId} setAlert={setAlertData} onClose={() => setLugarId(null)} />}
+        {lugarId && <LugarCard lugarId={lugarId} setAlert={setAlertData} showComment={showComment} setShowComment={setShowComment} onClose={() => setLugarId(null)} />}
+
+        {/* Panel muetra los comentarios */}
+        {showComment && lugarId && <ComentariosPanel lugarId={lugarId} setAlert={setAlertData} />}
       </div>
     </div>
   );

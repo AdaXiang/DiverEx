@@ -12,8 +12,8 @@
   top: 0;
   left: 0;
   width: auto;
-  height: 100%;
-  background-color: #ffffff;
+  height: auto;
+  background-color: transparent;
   z-index: 9999;
 }
 
@@ -22,8 +22,8 @@
   top: 0;
   right: 0;
   width: auto;
-  height: 100%;
-  background-color: #ffffff;
+  height: auto;
+  background-color: transparent;
   z-index: 9999;
 }
 

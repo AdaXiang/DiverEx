@@ -14,7 +14,7 @@
   box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.2);
 
   animation: slideIn 0.3s ease;
-  z-index: 9999;
+  z-index: 999999;
 }
 
 /* tipos */

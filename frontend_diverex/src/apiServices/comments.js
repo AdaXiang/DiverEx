@@ -9,8 +9,31 @@ export const deleteComment = (data) =>
   api.delete("/comentarios", { data });
 
 // Comentarios de un lugar
-export const getCommentsByPlace = (placeId) => 
-  api.get(`/comentarios/lugar/${placeId}`);
+export const getCommentsByPlace = (
+  placeId,
+  rankingMin = null,
+  rankingMax = null
+) => {
+
+  let query = [];
+
+  if (rankingMin !== null) {
+    query.push(`ranking_min=${rankingMin}`);
+  }
+
+  if (rankingMax !== null) {
+    query.push(`ranking_max=${rankingMax}`);
+  }
+
+  const queryString =
+    query.length > 0
+      ? `?${query.join("&")}`
+      : "";
+
+  return api.get(
+    `/comentarios/lugar/${placeId}${queryString}`
+  );
+};
 
 // Comentarios de un usuario
 export const getCommentsByUser = (userId) => 
