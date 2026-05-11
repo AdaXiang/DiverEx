@@ -54,3 +54,122 @@
     font-size: 13px;
     font-weight: 500;
 }
+
+.toggle-group {
+    display: flex;
+    background-color: #f3f4f6;
+    padding: 4px;
+    border-radius: 8px;
+    gap: 4px;
+}
+
+.toggle-item {
+    flex: 1;
+    border: none;
+    background: none;
+    padding: 8px 0;
+    cursor: pointer;
+    font-weight: bold;
+    border-radius: 6px;
+    color: #6b7280;
+    transition: all 0.2s;
+    font-size: 14px;
+}
+
+.toggle-item:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Estado cuando el botón está activado */
+.toggle-item.active {
+    background-color: white;
+    color: #2563eb;
+    /* Azul */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Colores específicos si quieres (opcional) */
+.toggle-item.active[title="Bueno"] {
+    color: #16a34a;
+}
+
+.toggle-item.active[title="Malo"] {
+    color: #dc2626;
+}
+
+.toggle-container {
+    display: flex;
+    justify-content: space-between;
+    background: #f8f9fa;
+    padding: 5px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    margin-top: 8px;
+}
+
+.toggle-btn {
+    flex: 1;
+    margin: 0 2px;
+    padding: 10px 0;
+    border: 2px solid transparent;
+    background: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 800;
+    color: #999;
+    transition: all 0.2s ease;
+}
+
+.toggle-btn:hover {
+    background: #f0f0f0;
+}
+
+.toggle-btn.active {
+    background: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+}
+
+.lista-tipos-scroll {
+    max-height: 200px;
+    /* Altura máxima antes de hacer scroll */
+    overflow-y: auto;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 10px;
+    background: #fff;
+}
+
+.grupo-categoria {
+    margin-bottom: 15px;
+}
+
+.titulo-categoria {
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #9ca3af;
+    letter-spacing: 0.05em;
+    margin-bottom: 5px;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+    font-size: 13px;
+    color: #4b5563;
+    cursor: pointer;
+}
+
+.checkbox-item input {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.checkbox-item:hover {
+    color: #2563eb;
+}

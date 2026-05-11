@@ -3,7 +3,7 @@ import json
 import requests
 from typing import Optional, List, Dict
 from couchbase.search import SearchOptions, GeoDistanceQuery
-from couchbase.options import SearchOptions
+from couchbase.options import Any, SearchOptions
 
 class LugarDAO:
     def __init__(self, host, user, password, bucket):
@@ -40,17 +40,6 @@ class LugarDAO:
         return results[0] if results else None
 
     # -----------------------------
-    # Filtrar por dataset
-    # -----------------------------
-    def get_by_dataset(self, dataset_type: str):
-        query = f"""
-        SELECT META(t).id AS id, t.*
-        FROM `{self.bucket}` t
-        WHERE t.dataset = "{dataset_type}"
-        """
-        return self._execute(query)
-
-    # -----------------------------
     # Listar todo (con filtro opcional)
     # -----------------------------
     def list_all(self, dataset: Optional[str] = None):
@@ -70,15 +59,38 @@ class LugarDAO:
     # -----------------------------
     # Búsqueda avanzada (filtros dinámicos)
     # -----------------------------
-    def search(self, filters: Dict[str, str]):
-        where_clauses = [f't.{key} = "{value}"' for key, value in filters.items()]
-        where_statement = " AND ".join(where_clauses)
-        
+    def search(self, filters: Dict[str, Any]):
+        where_clauses = []
+
+        for key, value in filters.items():
+            if value is None:
+                continue
+                
+            # 1. Si es una lista (Ej: estados=['B', 'R']) -> Usamos IN
+            if isinstance(value, list):
+                # Convertimos la lista de Python en un array de N1QL: ['B', 'R']
+                array_str = ", ".join([f"'{v}'" for v in value])
+                where_clauses.append(f"t.{key} IN [{array_str}]")
+                
+            # 2. Si es un Booleano (Ej: acceso_silla_ruedas=True) -> Sin comillas
+            elif isinstance(value, bool):
+                val_str = "TRUE" if value else "FALSE"
+                where_clauses.append(f"t.{key} = {val_str}")
+                
+            # 3. Si es un String normal (Ej: municipio="Don Benito") -> Usamos =
+            else:
+                where_clauses.append(f"t.{key} = '{value}'")
+
+        # Si no hay filtros, traemos todo (o puedes poner LIMIT)
+        where_statement = " AND ".join(where_clauses) if where_clauses else "1=1"
+
         query = f"""
-        SELECT META(t).id AS id, t.*
-        FROM `{self.bucket}` t
-        WHERE {where_statement}
+            SELECT META(t).id AS id, t.*
+            FROM `{self.bucket}` t
+            WHERE {where_statement}
         """
+        
+        print("N1QL Query:", query) # Útil para ver qué está montando
         return self._execute(query)
     
     # -----------------------------
@@ -142,5 +154,84 @@ class LugarDAO:
         query = f"""
         DELETE FROM `{self.bucket}`
         WHERE META().id = "{doc_id}"
+        """
+        return self._execute(query)
+    
+    import requests
+
+    def filter_places(self, lat, lon, distancia_max, acceso_silla_ruedas, zona_infantil, comedor, tipos, estados, nombre, municipio):
+        
+        where_clauses = ["t.type = 'feature'"] # Aseguramos buscar solo los documentos correctos
+
+        # ==========================================
+        # 1. FILTRO ESPACIAL (Motor FTS)
+        # ==========================================
+        if lat is not None and lon is not None and distancia_max is not None:
+            host = self.url.split(":8093")[0].replace("http://", "")
+            fts_url = f"http://{host}:8094/api/bucket/{self.bucket}/scope/_default/index/idx_geo/query"
+            
+            payload = {
+                "query": {
+                    "field": "geo_point.coordinates",
+                    "location": {"lon": float(lon), "lat": float(lat)},
+                    "distance": f"{distancia_max}km"
+                },
+                "size": 5000
+            }
+            
+            res = requests.post(fts_url, auth=self.auth, json=payload)
+            if res.status_code == 200:
+                hits = res.json().get("hits", [])
+                doc_ids = [hit.get("id") for hit in hits if hit.get("id")]
+                
+                # Si el usuario pide un radio y no hay nada, cortamos y devolvemos vacío inmediatamente
+                if not doc_ids:
+                    return []
+                    
+                # Si hay lugares cerca, obligamos a N1QL a buscar SOLO entre estos IDs
+                ids_str = ", ".join([f"'{i}'" for i in doc_ids])
+                where_clauses.append(f"META(t).id IN [{ids_str}]")
+            else:
+                print("Error en FTS:", res.text)
+                # Si FTS falla, puedes decidir si retornar [] o continuar sin el filtro de distancia
+
+        # ==========================================
+        # 2. FILTROS DE ATRIBUTOS (Motor N1QL)
+        # ==========================================
+        if acceso_silla_ruedas is not None:
+            val = "TRUE" if acceso_silla_ruedas else "FALSE"
+            where_clauses.append(f"t.properties.acceso_silla_ruedas = {val}")
+            
+        if zona_infantil is not None:
+            val = "TRUE" if zona_infantil else "FALSE"
+            where_clauses.append(f"t.properties.juegos_infantiles = {val}")
+
+        if comedor is not None:
+            val = "TRUE" if comedor else "FALSE"
+            where_clauses.append(f"t.properties.comedor = {val}")
+
+        if estados: # Si la lista ['B', 'R'] tiene datos
+            estados_str = ", ".join([f"'{e}'" for e in estados])
+            where_clauses.append(f"t.properties.estado IN [{estados_str}]")
+
+        if tipos: # Si la lista ['PU', 'LO'] tiene datos
+            tipos_str = ", ".join([f"'{t}'" for t in tipos])
+            where_clauses.append(f"(t.properties.tipo_parque IN [{tipos_str}] OR t.properties.tipo_lonja IN [{tipos_str}])")
+
+        if nombre:
+            where_clauses.append(f"LOWER(t.properties.nombre) LIKE '%{nombre.lower()}%'")
+            
+        if municipio:
+            where_clauses.append(f"t.properties.municipio_nombre = '{municipio}'")
+
+        # ==========================================
+        # 3. EJECUCIÓN FINAL
+        # ==========================================
+        where_statement = " AND ".join(where_clauses)
+        
+        query = f"""
+            SELECT META(t).id AS id, t.*
+            FROM `{self.bucket}` t
+            WHERE {where_statement}
         """
         return self._execute(query)

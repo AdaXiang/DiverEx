@@ -32,17 +32,27 @@ def to_geojson(items):
         "features": features
     }
 
-@router.get("/lugares/filtrar", response_model=List[LugarDTO])
+@router.get("/lugares/filtrar")
 async def filter_lugares(
-    dataset: Optional[str] = Query(None, description="Filtrar por 'parques' o 'lonjas'"),
-    municipio: Optional[str] = Query(None, description="Filtrar por nombre de municipio"),
-    titularidad: Optional[str] = Query(None, description="Filtrar por titularidad"),
-    gestion: Optional[str] = Query(None, description="Filtrar por gestión")
+    lat: Optional[float] = Query(None, description="Latitud del usuario"),
+    lon: Optional[float] = Query(None, description="Longitud del usuario"),
+    distancia_max: Optional[float] = Query(None, description="Distancia máxima en km"),
+    acceso_silla_ruedas: Optional[bool] = Query(None),
+    zona_infantil: Optional[bool] = Query(None),
+    comedor: Optional[bool] = Query(None),
+    tipo_lugar: Optional[List[str]] = Query(None),
+    estado: Optional[List[str]] = Query(None),
+    nombre: Optional[str] = Query(None),
+    municipio: Optional[str] = Query(None),
 ):
-    """
-    Endpoint avanzado para filtrar sitios por múltiples criterios.
-    """
-    return service.filter_places(dataset, municipio, titularidad, gestion)
+    # Pasamos TODOS los parámetros a la función maestra
+    items =  service.search_places(
+        lat=lat, lon=lon, distancia_max=distancia_max,
+        acceso_silla_ruedas=acceso_silla_ruedas, zona_infantil=zona_infantil,
+        comedor=comedor, tipos=tipo_lugar, estados=estado,
+        nombre=nombre, municipio=municipio
+    )
+    return to_geojson(items)
 
 #------------------------------
 # Endpoint para filtro geoespacial
@@ -93,12 +103,15 @@ async def delete_lugar(site_id: str):
 # READ
 #-----------------------------
 @router.get("/lugares")
-async def get_lugares(dataset: Optional[str] = Query(None, description="Filtrar por 'parques' o 'lonjas'")):
+async def get_lugares(
+    dataset: Optional[str] = Query(None, description="Filtrar por 'parques' o 'lonjas'")
+    ):
     """
     Retorna la lista entera de sitios de interés en la provincia de Badajoz.
     """
     items = service.get_all_places(dataset)
     return to_geojson(items)
+
 
 
 @router.get("/sitio/{site_id}", response_model=LugarDTO)

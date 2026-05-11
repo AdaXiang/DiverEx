@@ -16,7 +16,11 @@ function MainLayout() {
   const [userLocation, setUserLocation] = useState(null);
   const [filters, setFilters] = useState({
     sillaRuedas: false,
-    distanciaMax: 50
+    zonaInfantil: false,
+    comedor: false,
+    distanciaMax: 50,
+    tiposSeleccionados: [],
+    estadosSeleccionados: ['B', 'R', 'M', 'E'] // <--- IMPORTANTE AÑADIR ESTO
   });
 
   //estado global de alertas

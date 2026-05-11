@@ -96,13 +96,28 @@ class LugarService:
         return results
         
     # Método de búsqueda avanzada con filtros dinámicos
-    def search_places(self, filters: dict):
-        raw_data = self.dao.search(filters)
+    def search_places(self, lat=None, lon=None, distancia_max=None, 
+                  acceso_silla_ruedas=None, zona_infantil=None, 
+                  comedor=None, tipos=None, estados=None, 
+                  nombre=None, municipio=None):
+
         results = []
-        
+        raw_data = self.dao.filter_places(
+            lat=lat, 
+            lon=lon, 
+            distancia_max=distancia_max,
+            acceso_silla_ruedas=acceso_silla_ruedas,
+            zona_infantil=zona_infantil,
+            comedor=comedor,
+            tipos=tipos,
+            estados=estados,
+            nombre=nombre,
+            municipio=municipio
+        )
         for item in raw_data:
             props = item.get("properties", {})
             
+            # Creamos el DTO asegurándonos de que CADA nombre coincida con el DTO
             dto = LugarDTO(
                 id=item.get("_id"),
                 nombre=props.get("nombre", "Sin nombre"),
@@ -124,7 +139,9 @@ class LugarService:
                 electricidad=props.get("electricidad"),
                 comedor=props.get("comedor"),
                 juegos_infantiles=props.get("juegos_infantiles"),
-                otras_prestaciones=props.get("otras_prestaciones")
+                otras_prestaciones=props.get("otras_prestaciones"),
+                geo_point=item.get("geo_point"),  
+                geometry=item.get("geometry") 
             )
             results.append(dto)
         return results
