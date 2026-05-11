@@ -24,7 +24,7 @@ const COLORES_DATASET = {
 export default function GeoJSONLayer() {
     const [data, setData] = useState(null);
 
-    // 2. Los Hooks SIEMPRE van al principio, antes de cualquier 'if'
+    // 2. Definición del 'style' usando useMemo para evitar recalculaciones innecesarias
     const style = useMemo(() => (feature) => {
         const tipo = feature.properties?.dataset;
         const color = COLORES_DATASET[tipo] || COLORES_DATASET.default;
@@ -45,7 +45,6 @@ export default function GeoJSONLayer() {
 
     // 3. El 'if' para esperar los datos va DESPUÉS de definir los Hooks
     if (!data) return null;
-
     return (
         <>
             <GeoJSON
@@ -53,19 +52,28 @@ export default function GeoJSONLayer() {
                 data={data}
                 style={style}
             />
+
             <MarkerClusterGroup chunkedLoading>
                 {data.features.map((feature, index) => {
-                    const { lat, lon, nombre, municipio } = feature.properties;
-                    if (lat && lon) {
+                    const coordinates = feature.geo_point?.coordinates;
+
+                    if (coordinates && coordinates.length === 2) {
+                        const [lon, lat] = coordinates;
+
                         return (
-                            <Marker key={feature.id || index} position={[lat, lon]}>
+                            <Marker
+                                key={feature.id || index}
+                                position={[lat, lon]} // Leaflet usa [lat, lon]
+                            >
                                 <Popup>
-                                    <strong>{nombre}</strong><br />
-                                    {municipio}
+                                    <strong>{feature.properties?.nombre}</strong>
+                                    <br />
+                                    {feature.properties?.municipio}
                                 </Popup>
                             </Marker>
                         );
                     }
+
                     return null;
                 })}
             </MarkerClusterGroup>

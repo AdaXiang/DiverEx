@@ -17,9 +17,11 @@ def to_geojson(items):
             data = {k: v for k, v in item.items() if v is not None}
         
         geometry = data.pop("geometry", None)
+        geo_point = data.pop("geo_point", None)
         
         feature = {
             "type": "Feature",
+            "geo_point": geo_point,  
             "geometry": geometry,
             "properties": data
         }
@@ -42,6 +44,9 @@ async def filter_lugares(
     """
     return service.filter_places(dataset, municipio, titularidad, gestion)
 
+#------------------------------
+# Endpoint para filtro geoespacial
+#------------------------------
 @router.get("/lugares/geoespacial", response_model=List[LugarDTO])
 async def geospatial_filter(
     lat: float = Query(..., description="Latitud del punto central"),
@@ -51,8 +56,12 @@ async def geospatial_filter(
     """
     Endpoint para filtrar sitios dentro de un radio específico desde un punto geográfico.
     """
-    return service.geospatial_filter(lat, lon, radius)
+    return service.search_by_location(lat, lon, radius)
 
+
+#-----------------------------
+# CREATE, UPDATE, DELETE
+#-----------------------------
 @router.post("/lugares/", response_model=List[LugarDTO])
 async def create_lugar(lugar: LugarDTO):
     """
@@ -80,6 +89,9 @@ async def delete_lugar(site_id: str):
         raise HTTPException(status_code=404, detail="Sitio no encontrado para eliminar")
     return {"detail": "Sitio eliminado exitosamente"}
 
+#-----------------------------
+# READ
+#-----------------------------
 @router.get("/lugares")
 async def get_lugares(dataset: Optional[str] = Query(None, description="Filtrar por 'parques' o 'lonjas'")):
     """
@@ -87,6 +99,7 @@ async def get_lugares(dataset: Optional[str] = Query(None, description="Filtrar 
     """
     items = service.get_all_places(dataset)
     return to_geojson(items)
+
 
 @router.get("/sitio/{site_id}", response_model=LugarDTO)
 async def read_site(site_id: str):

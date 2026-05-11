@@ -1,5 +1,9 @@
+import json
+
 import requests
 from typing import Optional, List, Dict
+from couchbase.search import SearchOptions, GeoDistanceQuery
+from couchbase.options import SearchOptions
 
 class LugarDAO:
     def __init__(self, host, user, password, bucket):
@@ -80,20 +84,38 @@ class LugarDAO:
     # -----------------------------
     # Búsqueda geoespacial (ejemplo básico)
     # -----------------------------
-    def search_by_location(self, lat: float, lon: float, radius_km: float):
-        # Este es un ejemplo muy básico y no optimizado para producción
-        query = f"""
-        SELECT META(t).id AS id, t.*
-        FROM `{self.bucket}` t
-        WHERE t.geometry IS NOT MISSING
-          AND DISTANCE(t.geometry, {{ "type": "Point", "coordinates": [{lon}, {lat}] }}) <= {radius_km * 1000}
-        """
-        return self._execute(query)
-    
-        # Ejemplo de uso:
-        # dao = LugarDAO(host="localhost", user="admin", password="password", bucket="lugares")
-        # lugar = dao.get_by_id("some_doc_id")
+    def search_by_location(self, lat, lon, radius_km):
+        host = self.url.split(":8093")[0].replace("http://", "")
+        
+        fts_url = f"http://{host}:8094/api/bucket/places/scope/_default/index/idx_geo/query"
 
+        payload = {
+            "query": {
+                "field": "geo_point.coordinates",
+                "location": {"lon": float(lon), "lat": float(lat)},
+                "distance": f"{radius_km}km"
+            },
+            "size": 500
+        }
+        # Realizamos la consulta FTS para obtener los IDs de los documentos que cumplen con el filtro geoespacial
+        res = requests.post(fts_url, auth=self.auth, json=payload)
+        
+        if res.status_code != 200:
+            print(f"Error FTS: {res.text}")
+            return []
+
+        hits = res.json().get("hits", [])
+        print(f"FTS hits: {len(hits)}")
+        doc_ids = [hit.get("id") for hit in hits if hit.get("id")]
+
+        if not doc_ids:
+            return []
+
+        # N1QL para traer los documentos completos
+        ids_list = ", ".join([f"'{i}'" for i in doc_ids])
+        query = f"SELECT META(t).id AS id, t.* FROM `{self.bucket}` t WHERE META(t).id IN [{ids_list}]"
+        
+        return self._execute(query)
     # -----------------------------
     # Crear, actualizar, eliminar (CRUD básico)
     # -----------------------------

@@ -15,8 +15,7 @@ class LugarDTO(BaseModel):
     titularidad: str
     gestion: str
     superficie_cubierta: float
-    lat: float
-    lon: float
+    geo_point: Dict[str, Any]  # {"type": "Point", "coordinates": [lon, lat]}
     geometry: Dict[str, Any]
     tipo_lonja: Optional[str] = None
     superficie_aire: Optional[float] = None

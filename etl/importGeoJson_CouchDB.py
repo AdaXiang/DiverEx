@@ -381,8 +381,8 @@ def calcular_centroide(geometry: dict):
     lat = sum(p[1] for p in all_points) / len(all_points)
 
     return {
-        "lat": lat,
-        "lon": lon
+        "type": "Point",
+        "coordinates": [lon, lat]
     }
 
 def to_bool(value):
