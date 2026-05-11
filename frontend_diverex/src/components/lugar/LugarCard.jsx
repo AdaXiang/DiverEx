@@ -17,14 +17,22 @@ export default function LugarCard({ lugarId, onClose, setAlert, showComment, set
   const [favorite, setFavorite] = useState(false);
   const [visited, setVisited] = useState(false);
 
-    const tipoMap = {
-        ME: "Mercado",
-        FE: "Ferial",
-        PU: "Parque",
-        PI: "Parque infantil",
-        JA: "Jardín",
-        ZR: "Zona recreativa"
-    };
+  const tipoMap = {
+    "PU": "Parque urbano",
+    "PN": "Parque no urbano",
+    "PI": "Parque infantil (con uso infantil sólo)",
+    "JA": "Jardines",
+    "AN": "Áreas de la naturaleza",
+    "RF": "Refugios de pesca y de montaña",
+    "CA": "Campamentos",
+    "ZR": "Zonas recreativas naturales",
+    "OT": "Otros",
+    "LO": "Lonja",
+    "ME": "Mercado",
+    "FE": "Feria"
+  };
+
+
 
   useEffect(() => {
     if (!lugarId || !user) return;
@@ -155,15 +163,15 @@ export default function LugarCard({ lugarId, onClose, setAlert, showComment, set
         </div>
 
         {!showComment && (
-            <button className="comentarios-btn" onClick={() => setShowComment(true)}>
-                Ver comentarios ⬇️
-            </button>
+          <button className="comentarios-btn" onClick={() => setShowComment(true)}>
+            Ver comentarios ⬇️
+          </button>
         )}
 
         {showComment && (
-            <button className="comentarios-btn" onClick={() => setShowComment(false)}>
-                Cerrar comentarios ⬆️
-            </button>
+          <button className="comentarios-btn" onClick={() => setShowComment(false)}>
+            Cerrar comentarios ⬆️
+          </button>
         )}
       </div>
     </div>

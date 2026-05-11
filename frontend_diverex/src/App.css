@@ -57,3 +57,69 @@
     transform: rotate(360deg);
   }
 }
+
+.buscador-superior {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  /* SUBE EL Z-INDEX AL MÁXIMO */
+  z-index: 9999 !important;
+  width: 90%;
+  max-width: 500px;
+}
+
+/* Actualiza el wrapper para que el botón encaje bien */
+.buscador-input-wrapper {
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: 30px;
+  padding: 5px 5px 5px 20px;
+  /* Menos padding a la derecha para pegar el botón */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  border: 1px solid #e5e7eb;
+}
+
+.icono-lupa {
+  margin-right: 10px;
+  font-size: 18px;
+  color: #6b7280;
+}
+
+.buscador-input-wrapper input {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 15px;
+  color: #374151;
+  background: transparent;
+}
+
+.buscador-input-wrapper input::placeholder {
+  color: #9ca3af;
+}
+
+/* --- ESTILOS DEL NUEVO BOTÓN --- */
+.btn-buscar-texto {
+  background-color: #2563eb;
+  /* Azul corporativo */
+  color: white;
+  border: none;
+  border-radius: 25px;
+  padding: 8px 20px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-left: 10px;
+}
+
+.btn-buscar-texto:hover {
+  background-color: #1d4ed8;
+  /* Azul más oscuro al pasar el ratón */
+}
+
+.btn-buscar-texto:active {
+  transform: scale(0.98);
+}

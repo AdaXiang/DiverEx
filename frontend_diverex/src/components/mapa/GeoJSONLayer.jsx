@@ -22,7 +22,7 @@ const COLORES_DATASET = {
 };
 
 // 1. AHORA RECIBIMOS LOS FILTROS Y LA UBICACIÓN COMO PROPS
-export default function GeoJSONLayer({ filters, userLocation }) {
+export default function GeoJSONLayer({ filters, userLocation, setLugarId }) {
     const [data, setData] = useState(null);
 
     const style = useMemo(() => (feature) => {
@@ -59,6 +59,25 @@ export default function GeoJSONLayer({ filters, userLocation }) {
             }
             if (filters.tiposSeleccionados) {
                 filters.tiposSeleccionados.forEach(t => params.append('tipo_lugar', t));
+            }
+
+            // Filtros de Texto Inteligentes (Lugar, Municipio)
+            if (filters.busquedaTexto) {
+                const texto = filters.busquedaTexto;
+
+                // Si el usuario escribe una coma (Ej: "Parque, Mérida")
+                if (texto.includes(',')) {
+                    const partes = texto.split(','); // Divide en ["Parque", " Mérida"]
+                    const lugar = partes[0].trim();
+                    const muni = partes[1].trim();
+
+                    if (lugar) params.append('nombre', lugar);
+                    if (muni) params.append('municipio', muni);
+                }
+                // Si no hay coma, asumimos que está buscando el nombre del sitio
+                else {
+                    params.append('nombre', texto.trim());
+                }
             }
 
             try {
@@ -115,7 +134,15 @@ export default function GeoJSONLayer({ filters, userLocation }) {
                         return (
                             <Marker
                                 key={feature.id || index}
+
                                 position={[lat, lon]}
+                                eventHandlers={{
+                                    click: () => {
+                                        if (feature.properties?.id) {
+                                            setLugarId(feature.properties?.id);
+                                        }
+                                    }
+                                }}
                             >
                                 <Popup>
                                     <strong>{feature.properties?.nombre}</strong>

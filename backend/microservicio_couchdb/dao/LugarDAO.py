@@ -222,7 +222,7 @@ class LugarDAO:
             where_clauses.append(f"LOWER(t.properties.nombre) LIKE '%{nombre.lower()}%'")
             
         if municipio:
-            where_clauses.append(f"t.properties.municipio_nombre = '{municipio}'")
+            where_clauses.append(f"LOWER(t.properties.municipio_nombre) LIKE '%{municipio.lower()}%'")
 
         # ==========================================
         # 3. EJECUCIÓN FINAL

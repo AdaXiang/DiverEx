@@ -20,16 +20,22 @@ function MainLayout() {
     comedor: false,
     distanciaMax: 50,
     tiposSeleccionados: [],
-    estadosSeleccionados: ['B', 'R', 'M', 'E'] // <--- IMPORTANTE AÑADIR ESTO
+    estadosSeleccionados: ['B', 'R', 'M', 'E'],
+    busquedaTexto: ""
   });
+
+  const [inputValue, setInputValue] = useState("");
+  const ejecutarBusqueda = () => {
+    setFilters({ ...filters, busquedaTexto: inputValue });
+  };
 
   //estado global de alertas
   const [alertData, setAlertData] = useState(null);
 
-
+  console.log("id del lugar seleccionado en MainLayout:", lugarId);
   return (
     <div className="App">
-      <MapView setUserLocation={setUserLocation} filters={filters} userLocation={userLocation} />
+      <MapView setUserLocation={setUserLocation} filters={filters} userLocation={userLocation} setLugarId={setLugarId} />
 
       {/* ALERTA GLOBAL */}
       {alertData && (
@@ -40,6 +46,25 @@ function MainLayout() {
           onClose={() => setAlertData(null)}
         />
       )}
+
+      {/* --- BARRA DE BÚSQUEDA CON BOTÓN --- */}
+      <div className="buscador-superior">
+        <div className="buscador-input-wrapper">
+          <span className="icono-lupa">🔍</span>
+          <input
+            type="text"
+            placeholder="Ej: Parque, Badajoz"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') ejecutarBusqueda();
+            }}
+          />
+          <button className="btn-buscar-texto" onClick={ejecutarBusqueda}>
+            Buscar
+          </button>
+        </div>
+      </div>
 
       <div id="panelFlotante">
         {/* Login/Logup si no datos guardados */}
