@@ -13,8 +13,10 @@
   left: 0;
   width: auto;
   height: auto;
+  max-height: 100%;
   background-color: white;
   z-index: 9999;
+  overflow-y: auto;
 }
 
 #panelFlotanteDos {
@@ -23,8 +25,26 @@
   right: 0;
   width: auto;
   height: auto;
+  max-height: 100%;
   background-color: transparent;
   z-index: 9999;
+  overflow-y: auto;
+}
+
+/* scroll fino */
+
+/* scrollbar panel */
+::-webkit-scrollbar{
+    width: 8px;
+}
+
+::-webkit-scrollbar-thumb{
+    background: var(--color-secondary);
+    border-radius: 1rem;
+}
+
+::-webkit-scrollbar-track{
+    background: rgba(255,255,255,0.05);
 }
 
 @media (prefers-reduced-motion: no-preference) {
