@@ -13,7 +13,6 @@ function BotonCentrar({ userLocation }) {
 
     const centrarMapa = () => {
         if (userLocation) {
-            // El 15 es el nivel de zoom (puedes ajustarlo)
             map.flyTo([userLocation.lat, userLocation.lng], 16, {
                 animate: true,
                 duration: 1.5 // Segundos que tarda la animación
@@ -36,8 +35,6 @@ function BotonCentrar({ userLocation }) {
 }
 
 export default function MapView({ setUserLocation, filters, userLocation, setLugarId }) {
-    // Los estados se quedan aquí para poder compartirlos entre Filtros y el Mapa
-    console.log("Ubicación del usuario en MapView:", userLocation);
 
     return (
         <div style={{ position: "relative", width: "100%", height: "100vh", overflow: "hidden" }}>

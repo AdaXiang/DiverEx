@@ -454,11 +454,13 @@ def load_geojson(file_path, tipo):
         codigo = props.get("codigo_municipio")
         nombre_municipio = municipios.get(codigo, "Desconocido")
         geo_point = calcular_centroide(geom)
+        tipo_lugar = props.get("tipo_lonja") if tipo == "lonjas" else props.get("tipo_parque")
 
         doc = {
             "_id": f"{tipo}_{i}",
             "type": "feature",
             "dataset": tipo,
+            "tipo_lugar": tipo_lugar, 
             "geometry": geom,
             "geo_point": geo_point,
             "properties": {

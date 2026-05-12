@@ -210,13 +210,13 @@ class LugarDAO:
             val = "TRUE" if comedor else "FALSE"
             where_clauses.append(f"t.properties.comedor = {val}")
 
-        if estados: # Si la lista ['B', 'R'] tiene datos
+        if estados: 
             estados_str = ", ".join([f"'{e}'" for e in estados])
             where_clauses.append(f"t.properties.estado IN [{estados_str}]")
 
-        if tipos: # Si la lista ['PU', 'LO'] tiene datos
+        if tipos: 
             tipos_str = ", ".join([f"'{t}'" for t in tipos])
-            where_clauses.append(f"(t.properties.tipo_parque IN [{tipos_str}] OR t.properties.tipo_lonja IN [{tipos_str}])")
+            where_clauses.append(f"t.tipo_lugar IN [{tipos_str}]")
 
         if nombre:
             where_clauses.append(f"LOWER(t.properties.nombre) LIKE '%{nombre.lower()}%'")

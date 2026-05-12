@@ -18,45 +18,37 @@ class LugarService:
 
     # Devuelve un lugar específico por su ID, mapeado a un DTO
     def get_site_details(self, site_id: str) -> LugarDTO:
-        data = self.dao.get_by_id(site_id)
-        if not data:
+        item = self.dao.get_by_id(site_id)
+        props = item.get("properties", {}) if item else {}
+        if not item:
             return None
         
-        props = data.get("properties", {})
-        geo_point = data.get("geo_point", {})  # Extraemos el punto central
-        
-        payload = {
-            "id": data["_id"],
-            "nombre": props.get("nombre", "Sin nombre"),
-            "dataset": data.get("dataset", "Desconocido"),
-            "municipio": props.get("municipio_nombre", "Desconocido"),
-            
-            # Mapeo de Geografía
-            "lat": geo_point.coordinates[1] if "coordinates" in geo_point else None,  # Latitud
-            "lon": geo_point.coordinates[0] if "coordinates" in geo_point else None,  # Longitud
-            "geometry": data.get("geometry"), # Pasamos el objeto MultiPolygon completo
-            
-            # Campos base
-            "codigo_provincia": props.get("codigo_provincia"),
-            "codigo_municipio": props.get("codigo_municipio"),
-            "estado": props.get("estado"),
-            "titularidad": props.get("titularidad"),
-            "gestion": props.get("gestion"),
-            "superficie_cubierta": props.get("superficie_cubierta")
-        }
+        dto = LugarDTO(
+                id=item.get("_id"),
+                tipo_lugar=item.get("tipo_lugar", "desconocido"),
+                nombre=props.get("nombre", "Sin nombre"),
+                municipio=props.get("municipio_nombre", "Provincia de Badajoz"),
+                dataset=item.get("dataset", "general"), 
+                acceso_silla_ruedas=props.get("acceso_silla_ruedas", 0),
+                codigo_provincia=props.get("codigo_provincia"),
+                codigo_municipio=props.get("codigo_municipio"),
+                titularidad=props.get("titularidad"),
+                gestion=props.get("gestion"),
+                superficie_cubierta=props.get("superficie_cubierta"),
+                superficie_aire=props.get("superficie_aire"),
+                superficie_solar=props.get("superficie_solar"),
+                estado=props.get("estado"),
+                agua=props.get("agua"),
+                saneamiento=props.get("saneamiento"),
+                electricidad=props.get("electricidad"),
+                comedor=props.get("comedor"),
+                juegos_infantiles=props.get("juegos_infantiles"),
+                otras_prestaciones=props.get("otras_prestaciones"),
+                geo_point=item.get("geo_point"),  
+                geometry=item.get("geometry") 
+            )
 
-        # Campos opcionales (Booleanos y superficies)
-        campos_opcionales = [
-            "acceso_silla_ruedas", "tipo_lonja", "superficie_aire", 
-            "superficie_solar", "tipo_parque", "agua", "saneamiento", 
-            "electricidad", "comedor", "juegos_infantiles", "otras_prestaciones"
-        ]
-
-        for campo in campos_opcionales:
-            if campo in props:
-                payload[campo] = props[campo]
-
-        return LugarDTO(**payload)
+        return dto
     
     # Devuelve una lista de lugares, opcionalmente filtrada por categoría (dataset)
     def get_all_places(self, category: Optional[str] = None):
@@ -69,20 +61,19 @@ class LugarService:
             # Creamos el DTO asegurándonos de que CADA nombre coincida con el DTO
             dto = LugarDTO(
                 id=item.get("_id"),
+                tipo_lugar=item.get("tipo_lugar", "desconocido"),
                 nombre=props.get("nombre", "Sin nombre"),
                 municipio=props.get("municipio_nombre", "Provincia de Badajoz"),
                 dataset=item.get("dataset", "general"), 
                 acceso_silla_ruedas=props.get("acceso_silla_ruedas", 0),
                 codigo_provincia=props.get("codigo_provincia"),
                 codigo_municipio=props.get("codigo_municipio"),
-                tipo_lonja=props.get("tipo_lonja"),
                 titularidad=props.get("titularidad"),
                 gestion=props.get("gestion"),
                 superficie_cubierta=props.get("superficie_cubierta"),
                 superficie_aire=props.get("superficie_aire"),
                 superficie_solar=props.get("superficie_solar"),
                 estado=props.get("estado"),
-                tipo_parque=props.get("tipo_parque"),
                 agua=props.get("agua"),
                 saneamiento=props.get("saneamiento"),
                 electricidad=props.get("electricidad"),
@@ -120,20 +111,19 @@ class LugarService:
             # Creamos el DTO asegurándonos de que CADA nombre coincida con el DTO
             dto = LugarDTO(
                 id=item.get("_id"),
+                tipo_lugar=item.get("tipo_lugar", "desconocido"),
                 nombre=props.get("nombre", "Sin nombre"),
                 municipio=props.get("municipio_nombre", "Provincia de Badajoz"),
                 dataset=item.get("dataset", "general"), 
                 acceso_silla_ruedas=props.get("acceso_silla_ruedas", 0),
                 codigo_provincia=props.get("codigo_provincia"),
                 codigo_municipio=props.get("codigo_municipio"),
-                tipo_lonja=props.get("tipo_lonja"),
                 titularidad=props.get("titularidad"),
                 gestion=props.get("gestion"),
                 superficie_cubierta=props.get("superficie_cubierta"),
                 superficie_aire=props.get("superficie_aire"),
                 superficie_solar=props.get("superficie_solar"),
                 estado=props.get("estado"),
-                tipo_parque=props.get("tipo_parque"),
                 agua=props.get("agua"),
                 saneamiento=props.get("saneamiento"),
                 electricidad=props.get("electricidad"),
@@ -156,20 +146,19 @@ class LugarService:
             
             dto = LugarDTO(
                 id=item.get("_id"),
+                tipo_lugar=item.get("tipo_lugar", "desconocido"),
                 nombre=props.get("nombre", "Sin nombre"),
                 municipio=props.get("municipio_nombre", "Provincia de Badajoz"),
                 dataset=item.get("dataset", "general"), 
                 acceso_silla_ruedas=props.get("acceso_silla_ruedas", 0),
                 codigo_provincia=props.get("codigo_provincia"),
                 codigo_municipio=props.get("codigo_municipio"),
-                tipo_lonja=props.get("tipo_lonja"),
                 titularidad=props.get("titularidad"),
                 gestion=props.get("gestion"),
                 superficie_cubierta=props.get("superficie_cubierta"),
                 superficie_aire=props.get("superficie_aire"),
                 superficie_solar=props.get("superficie_solar"),
                 estado=props.get("estado"),
-                tipo_parque=props.get("tipo_parque"),
                 agua=props.get("agua"),
                 saneamiento=props.get("saneamiento"),
                 electricidad=props.get("electricidad"),

@@ -32,10 +32,8 @@ export default function LugarCard({ lugarId, onClose, setAlert, showComment, set
     "FE": "Feria"
   };
 
-
-
   useEffect(() => {
-    if (!lugarId || !user) return;
+    if (!lugarId) return;
 
     const fetchData = async () => {
       try {
@@ -63,12 +61,15 @@ export default function LugarCard({ lugarId, onClose, setAlert, showComment, set
   // 🔘 handlers
   const handleLike = async () => {
     try {
-      if (liked) {
+      if (liked && user) {
         await unlike({ user_id: user.id, lugar_id: lugarId });
         setLiked(false);
-      } else {
+      } else if (user) {
         await like({ user_id: user.id, lugar_id: lugarId });
         setLiked(true);
+      }
+      else {
+        setAlert?.({ title: "Aviso", message: "Debes iniciar sesión para dar like", type: 0 });
       }
     } catch {
       setAlert?.({ title: "Error", message: "Error en like", type: 0 });
@@ -77,12 +78,15 @@ export default function LugarCard({ lugarId, onClose, setAlert, showComment, set
 
   const handleFavorite = async () => {
     try {
-      if (favorite) {
+      if (favorite && user) {
         await removeFavorite({ user_id: user.id, lugar_id: lugarId });
         setFavorite(false);
-      } else {
+      } else if (user) {
         await addFavorite({ user_id: user.id, lugar_id: lugarId });
         setFavorite(true);
+      }
+      else {
+        setAlert?.({ title: "Aviso", message: "Debes iniciar sesión para agregar a favoritos", type: 0 });
       }
     } catch {
       setAlert?.({ title: "Error", message: "Error en favoritos", type: 0 });
@@ -91,12 +95,15 @@ export default function LugarCard({ lugarId, onClose, setAlert, showComment, set
 
   const handleVisit = async () => {
     try {
-      if (visited) {
+      if (visited && user) {
         await deleteVisit({ user_id: user.id, lugar_id: lugarId });
         setVisited(false);
-      } else {
+      } else if (user) {
         await createVisit({ user_id: user.id, lugar_id: lugarId });
         setVisited(true);
+      }
+      else {
+        setAlert?.({ title: "Aviso", message: "Debes iniciar sesión para marcar como visitado", type: 0 });
       }
     } catch {
       setAlert?.({ title: "Error", message: "Error en visitas", type: 0 });

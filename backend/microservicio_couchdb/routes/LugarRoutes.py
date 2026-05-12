@@ -1,5 +1,6 @@
 from typing import Optional, List
 from fastapi import APIRouter, HTTPException, Query
+from requests import request
 from services.LugarService import LugarService
 from dto.LugarDTO import LugarDTO
 
@@ -114,10 +115,10 @@ async def get_lugares(
 
 
 
-@router.get("/sitio/{site_id}", response_model=LugarDTO)
+@router.get("/lugar/{site_id}")
 async def read_site(site_id: str):
     site = service.get_site_details(site_id)
     print(type(site))
     if not site:
         raise HTTPException(status_code=404, detail="Sitio no encontrado")
-    return site.model_dump(exclude_none=True)
+    return to_geojson([site])
