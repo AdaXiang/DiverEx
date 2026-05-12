@@ -5,7 +5,7 @@ REM Ruta base del proyecto
 set "BASE_DIR=%~dp0.."
 
 REM Ir a backend (ROOT DEL PROYECTO PYTHON)
-cd /d "%BASE_DIR%\backend"
+cd /d "%BASE_DIR%\backend\microservicio_couchdb"
 
 echo Activando entorno...
 call "%BASE_DIR%\venv\Scripts\activate.bat"
@@ -14,6 +14,6 @@ echo Configurando PYTHONPATH...
 set PYTHONPATH=%CD%
 
 echo Iniciando FastAPI...
-uvicorn microservicio_couchdb.main:app --reload --port 8001 
+uvicorn main:app --reload --port 8001 
 
 pause
