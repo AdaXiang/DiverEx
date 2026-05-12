@@ -16,7 +16,7 @@
 /* hover fino */
 .item:hover {
   transform: translateY(-0.1rem);
-  box-shadow: 0 0.3rem 0.8rem rgba(0,0,0,0.15);
+  box-shadow: 0 0.3rem 0.8rem rgba(0, 0, 0, 0.15);
 }
 
 /* HEADER */
@@ -37,7 +37,7 @@
   padding: 0.15rem 0.4rem;
   border-radius: 0.3rem;
 
-  background: rgba(0,0,0,0.08);
+  background: rgba(0, 0, 0, 0.08);
 }
 
 /* BODY */
@@ -89,4 +89,12 @@
 .item-footer {
   font-size: 0.65rem;
   opacity: 0.5;
+}
+
+.item-municipio {
+  margin: 0.2rem 0;
+  font-size: 0.75rem;
+  color: var(--color-secondary);
+  /* Alinea este elemento hijo a la izquierda del contenedor flex */
+  align-self: flex-start;
 }

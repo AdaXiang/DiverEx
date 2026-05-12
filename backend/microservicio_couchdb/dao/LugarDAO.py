@@ -156,8 +156,7 @@ class LugarDAO:
         WHERE META().id = "{doc_id}"
         """
         return self._execute(query)
-    
-    import requests
+ 
 
     def filter_places(self, lat, lon, distancia_max, acceso_silla_ruedas, zona_infantil, comedor, tipos, estados, nombre, municipio):
         

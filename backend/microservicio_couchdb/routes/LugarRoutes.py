@@ -113,8 +113,6 @@ async def get_lugares(
     items = service.get_all_places(dataset)
     return to_geojson(items)
 
-
-
 @router.get("/lugar/{site_id}")
 async def read_site(site_id: str):
     site = service.get_site_details(site_id)

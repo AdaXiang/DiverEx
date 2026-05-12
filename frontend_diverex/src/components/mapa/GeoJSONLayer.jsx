@@ -22,7 +22,7 @@ const COLORES_DATASET = {
     "default": "#6b7280"
 };
 
-export default function GeoJSONLayer({ filters, userLocation, setLugarId }) {
+export default function GeoJSONLayer({ filters, userLocation, setLugarId, setLugaresFiltrados }) {
     const map = useMap();
     const [data, setData] = useState(null);
 
@@ -53,8 +53,13 @@ export default function GeoJSONLayer({ filters, userLocation, setLugarId }) {
                     lon: userLocation?.lng
                 });
 
-                console.log("Datos filtrados recibidos:", geojson);
                 setData(geojson);
+
+                if (setLugaresFiltrados && geojson.features) {
+                    const datosParaLista = geojson.features.map(f => f.properties);
+                    setLugaresFiltrados(datosParaLista);
+                }
+
             } catch (error) {
                 console.error("Error en servidor:", error);
 

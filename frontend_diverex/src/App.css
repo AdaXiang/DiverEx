@@ -17,16 +17,6 @@
   z-index: 9999;
 }
 
-#panelFlotanteDos {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: auto;
-  height: auto;
-  background-color: transparent;
-  z-index: 9999;
-}
-
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
@@ -122,4 +112,52 @@
 
 .btn-buscar-texto:active {
   transform: scale(0.98);
+}
+
+/* 1. Posicionamiento en el mapa */
+#panelFlotanteDos {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 1000;
+  width: 350px;
+  max-height: 90vh;
+  pointer-events: none;
+}
+
+/* 2. El contenedor blanco unificado */
+.columna-blanca-unica {
+  pointer-events: auto;
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  /* Corta lo que sobresalga */
+  max-height: 90vh;
+}
+
+/* 3. Hacer que el scroll sea global para toda la columna */
+.columna-blanca-unica {
+  overflow-y: auto;
+}
+
+/* 4. Estilo para la parte de la lista */
+.seccion-resultados-lista {
+  padding: 0 1rem 1rem 1rem;
+  /* Espaciado interno */
+  width: 100%;
+  box-sizing: border-box;
+  max-height: 30vh;
+}
+
+.titulo-resultados {
+  text-align: center;
+  font-size: 1.1rem;
+  padding: 1rem 0;
+  margin: 0;
+  border-top: 1px solid #eee;
+  /* Separador sutil con la tarjeta de arriba */
+  color: #333;
 }
