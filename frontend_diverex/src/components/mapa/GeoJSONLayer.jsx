@@ -56,7 +56,11 @@ export default function GeoJSONLayer({ filters, userLocation, setLugarId, setLug
                 setData(geojson);
 
                 if (setLugaresFiltrados && geojson.features) {
-                    const datosParaLista = geojson.features.map(f => f.properties);
+                    //const datosParaLista = geojson.features.map(f => f.properties);
+                    const datosParaLista = geojson.features.map(f => ({
+                        ...f.properties,
+                        coordinates: f.geo_point?.coordinates // Guardamos las coordenadas explícitamente
+                    }));
                     setLugaresFiltrados(datosParaLista);
                 }
 

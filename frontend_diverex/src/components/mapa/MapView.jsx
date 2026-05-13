@@ -66,9 +66,6 @@ export default function MapView({
 
         if (!item) return null;
 
-        // IMPORTANTE: Si 'item' es solo la parte de 'properties' (que enviamos desde GeoJSONLayer),
-        // necesitamos que el MapController sepa dónde están las coordenadas.
-        // Vamos a normalizar el objeto para el controlador:
         return {
             coords: item.geo_point?.coordinates || item.coordinates
         };

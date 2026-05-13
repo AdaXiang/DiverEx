@@ -45,6 +45,8 @@ function MainLayout() {
         userLocation={userLocation}
         setLugarId={setLugarId}
         setLugaresFiltrados={setLugaresFiltrados}
+        lugaresFiltrados={lugaresFiltrados}
+        lugarId={lugarId}
       />
 
       {alertData && (
