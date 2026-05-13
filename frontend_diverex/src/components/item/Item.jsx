@@ -30,7 +30,8 @@ export default function Item({ data, setLugarId }) {
         tipo_lugar,
         municipio,
         estado,
-        accesible
+        accesible,
+        distancia_km
     } = data;
 
     return (
@@ -41,6 +42,12 @@ export default function Item({ data, setLugarId }) {
             </div>
 
             <p className="item-municipio">{municipio}</p>
+
+            {distancia_km != null && (
+                <p className="item-municipio">
+                    {distancia_km < 1 ? `${Math.round(distancia_km * 1000)} m` : `${distancia_km} km`}
+                </p>
+            )}
 
             <div className="item-body">
                 <span className={`estado estado-${estado}`}>

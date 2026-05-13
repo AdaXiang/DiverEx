@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { GeoJSON, Marker, Popup, useMap } from "react-leaflet";
 import MarkerClusterGroup from 'react-leaflet-cluster';
 import { getLugaresFiltrados } from "../../apiServices/lugares.js";
@@ -22,9 +22,10 @@ const COLORES_DATASET = {
     "default": "#6b7280"
 };
 
-export default function GeoJSONLayer({ filters, userLocation, setLugarId, setLugaresFiltrados }) {
+export default function GeoJSONLayer({ filters, userLocation, setLugarId, setLugaresFiltrados, lugarId }) {
     const map = useMap();
     const [data, setData] = useState(null);
+    const markerRefs = useRef({});
 
     const centrarMapa = (lat, lon) => {
         map.flyTo([lat, lon], 16, {
@@ -54,6 +55,7 @@ export default function GeoJSONLayer({ filters, userLocation, setLugarId, setLug
                 });
 
                 setData(geojson);
+                console.log("Datos GeoJSON recibidos:", geojson);
 
                 if (setLugaresFiltrados && geojson.features) {
                     //const datosParaLista = geojson.features.map(f => f.properties);
@@ -87,6 +89,27 @@ export default function GeoJSONLayer({ filters, userLocation, setLugarId, setLug
 
     }, [filters, userLocation]);
 
+    useEffect(() => {
+        if (!lugarId || !markerRefs.current[lugarId]) return;
+
+        const marker = markerRefs.current[lugarId];
+
+        const abrirPopupFinal = () => {
+            if (marker) {
+                marker.openPopup();
+            }
+        };
+
+        map.once('moveend', () => {
+            setTimeout(abrirPopupFinal, 100);
+        });
+
+        if (map.getBounds().contains(marker.getLatLng())) {
+            abrirPopupFinal();
+        }
+
+    }, [lugarId, map]);
+
 
     if (!data) return null;
 
@@ -105,6 +128,7 @@ export default function GeoJSONLayer({ filters, userLocation, setLugarId, setLug
             <MarkerClusterGroup chunkedLoading>
                 {data.features?.map((feature, index) => {
                     const coordinates = feature.geo_point?.coordinates;
+                    const itemId = feature.properties?.id || feature.id;
 
                     if (coordinates && coordinates.length === 2) {
                         const [lon, lat] = coordinates;
@@ -113,6 +137,11 @@ export default function GeoJSONLayer({ filters, userLocation, setLugarId, setLug
                             <Marker
                                 key={feature.id || index}
                                 position={[lat, lon]}
+                                ref={(ref) => {
+                                    if (ref && itemId) {
+                                        markerRefs.current[itemId] = ref;
+                                    }
+                                }}
                                 eventHandlers={{
                                     click: () => {
                                         // Centrar el mapa en la ubicación del marcador

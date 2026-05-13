@@ -36,6 +36,12 @@ export const getLugaresFiltrados = async (filters) => {
             filters.tiposSeleccionados.forEach(t => params.append('tipo_lugar', t));
         }
 
+
+        // Lista de recomendaciones
+        if (filters.recomendaciones) {
+            filters.recomendaciones.forEach(r => params.append('recomendacion', r));
+        }
+
         // texto
         if (filters.busquedaTexto) {
             const texto = filters.busquedaTexto;

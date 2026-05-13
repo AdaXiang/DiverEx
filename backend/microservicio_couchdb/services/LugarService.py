@@ -105,9 +105,16 @@ class LugarService:
             nombre=nombre,
             municipio=municipio
         )
+
+        if not raw_data:
+            return []
+
+        results = []
+
         for item in raw_data:
             props = item.get("properties", {})
             
+            distancia_calculada = item.get("distancia_km", 0)
             # Creamos el DTO asegurándonos de que CADA nombre coincida con el DTO
             dto = LugarDTO(
                 id=item.get("_id"),
@@ -131,7 +138,8 @@ class LugarService:
                 juegos_infantiles=props.get("juegos_infantiles"),
                 otras_prestaciones=props.get("otras_prestaciones"),
                 geo_point=item.get("geo_point"),  
-                geometry=item.get("geometry") 
+                geometry=item.get("geometry"),
+                distancia_km=distancia_calculada
             )
             results.append(dto)
         return results

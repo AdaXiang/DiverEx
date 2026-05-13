@@ -38,7 +38,7 @@ function MapController({ selectedFeature }) {
             const [lon, lat] = selectedFeature.coords;
             console.log("Volando a:", lat, lon); // Para que veas en consola si se ejecuta
 
-            map.flyTo([lat, lon], 17, {
+            map.flyTo([lat, lon], 18, {
                 animate: true,
                 duration: 1.5,
             });
@@ -88,6 +88,7 @@ export default function MapView({
                     userLocation={userLocation}
                     setLugarId={setLugarId}
                     setLugaresFiltrados={setLugaresFiltrados}
+                    lugarId={lugarId}
                 />
 
                 <LocationMarker setUserLocation={setUserLocation} />

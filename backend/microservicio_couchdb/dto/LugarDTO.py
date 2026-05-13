@@ -26,3 +26,5 @@ class LugarDTO(BaseModel):
     comedor: Optional[bool] = None
     juegos_infantiles: Optional[bool] = None
     otras_prestaciones: Optional[bool] = None
+    distancia_km: Optional[float] = None
+    
