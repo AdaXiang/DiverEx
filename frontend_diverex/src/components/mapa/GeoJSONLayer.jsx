@@ -1,7 +1,9 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useContext } from "react";
 import { GeoJSON, Marker, Popup, useMap } from "react-leaflet";
 import MarkerClusterGroup from 'react-leaflet-cluster';
 import { getLugaresFiltrados } from "../../apiServices/lugares.js";
+import { getFilteredRecommendations } from "../../apiServices/recommendations.js";
+import { AuthContext } from "../../context/AuthContext";
 
 import L from 'leaflet';
 import icon from 'leaflet/dist/images/marker-icon.png';
@@ -22,7 +24,8 @@ const COLORES_DATASET = {
     "default": "#6b7280"
 };
 
-export default function GeoJSONLayer({ filters, userLocation, setLugarId }) {
+export default function GeoJSONLayer({ filters, modoFiltro, recommendationFilters, userLocation, setLugarId }) {
+    const { user } = useContext(AuthContext);
     const map = useMap();
     const [data, setData] = useState(null);
 
@@ -47,6 +50,20 @@ export default function GeoJSONLayer({ filters, userLocation, setLugarId }) {
     useEffect(() => {
         const fetchDatosFiltrados = async () => {
             try {
+                //recomendaciones
+                if (!modoFiltro) {
+                    await console.log("filtros: ",recommendationFilters)
+                    const recomendaciones = await getFilteredRecommendations(user.id,recommendationFilters)
+                    await console.log("recomendaciones: ",recomendaciones.data)
+                     const diccionario =
+                        await Object.fromEntries(
+                            recomendaciones.data.map(item => [
+                                item.id
+                            ])
+                        );
+                    await console.log("recomendacionesId: ",diccionario)
+                }
+
                 const geojson = await getLugaresFiltrados({
                     ...filters,
                     lat: userLocation?.lat,
@@ -76,7 +93,7 @@ export default function GeoJSONLayer({ filters, userLocation, setLugarId }) {
 
         return () => clearTimeout(timer);
 
-    }, [filters, userLocation]);
+    }, [filters,modoFiltro,recommendationFilters, userLocation]);
 
 
     if (!data) return null;

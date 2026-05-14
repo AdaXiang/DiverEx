@@ -27,6 +27,24 @@ IF %ERRORLEVEL% NEQ 0 (
 echo ⏳ Esperando a Memgraph...
 timeout /t 5 >nul
 
+REM ===============================
+REM 1. COUCHBASE
+REM ===============================
+echo.
+echo 🧠 Iniciando CouchBase...
+
+docker start couchbase >nul 2>&1
+
+IF %ERRORLEVEL% NEQ 0 (
+    echo 🔄 Contenedor no existe, creando...
+    docker run -d --name couchbase -p 8091-8097:8091-8097 -p 11210:11210 couchbase
+) ELSE (
+    echo ✅ CouchBase ya estaba iniciado
+)
+
+echo ⏳ Esperando a CouchBase...
+timeout /t 5 >nul
+
 
 REM ===============================
 REM 2. ENTORNO VIRTUAL

@@ -34,7 +34,7 @@ function BotonCentrar({ userLocation }) {
     );
 }
 
-export default function MapView({ setUserLocation, filters, userLocation, setLugarId }) {
+export default function MapView({ setUserLocation, filters, modoFiltro, recommendationFilters, userLocation, setLugarId }) {
 
     return (
         <div style={{ position: "relative", width: "100%", height: "100vh", overflow: "hidden" }}>
@@ -49,7 +49,7 @@ export default function MapView({ setUserLocation, filters, userLocation, setLug
                 <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
 
-                <GeoJSONLayer filters={filters} userLocation={userLocation} setLugarId={setLugarId} />
+                <GeoJSONLayer filters={filters} modoFiltro={modoFiltro} recommendationFilters={recommendationFilters} userLocation={userLocation} setLugarId={setLugarId} />
                 <LocationMarker setUserLocation={setUserLocation} />
                 <BotonCentrar userLocation={userLocation} />
             </MapContainer>

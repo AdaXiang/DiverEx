@@ -22,60 +22,160 @@ def getRecomendaciones(user_id):
 # RECOMENDACIONES FILTRADAS
 # ==============================
 def getRecomendacionesFiltradas(user_id, filtros):
-    query = f"""
-    MATCH (u:Usuario {{id: $uid}})-[:FAVORITO|VISITA]->(l:Lugar)<-[:FAVORITO|VISITA]-(other:Usuario)
+    query = """
+    MATCH (u:Usuario {id: $uid})-[:FAVORITO|VISITA]->(l:Lugar)<-[:FAVORITO|VISITA]-(other:Usuario)
     MATCH (other)-[:FAVORITO|VISITA]->(rec:Lugar)
-    WHERE NOT (u)-[:VISITA]->(rec)
     """
 
-    params = {"uid": user_id}
+    # Recomendaciones genericas
+    params = { "uid": user_id }
 
-    # reemplazamos MATCH de rec por si filtra por el tipo de lugar
-    query = query.replace("MATCH (other)-[:FAVORITO|VISITA]->(rec:Lugar)", f"MATCH (other)-[:FAVORITO|VISITA]->(rec{':' + filtros['tipo'] if filtros.get('tipo') in ['Parque','Lonja'] else ':Lugar'})")
+    conditions = [ "NOT (u)-[:VISITA]->(rec)" ]
 
+    # ==========================================
+    # FILTRO POR LABEL (Optimizar busqueda por label)
+    # ==========================================
+    tipos_validos = [
+        t for t in (filtros.get("tipo") or [])
+        if t in ["Parque", "Lonja"]
+    ]
+
+    # Solo filtramos por label si hay uno único
+    if len(tipos_validos) == 1:
+
+        query = query.replace(
+            "(rec:Lugar)",
+            f"(rec:{tipos_validos[0]})"
+        )
+
+    # ==========================================
+    # ESTADO
+    # ==========================================
     if filtros.get("estado"):
-        query += " AND rec.estado = $estado"
+
+        conditions.append(
+            "rec.estado IN $estado"
+        )
+
         params["estado"] = filtros["estado"]
 
+    # ==========================================
+    # ACCESIBILIDAD
+    # ==========================================
     if filtros.get("accesible") is not None:
-        query += " AND rec.acceso_silla_ruedas = $accesible"
+
+        conditions.append(
+            "rec.acceso_silla_ruedas = $accesible"
+        )
+
         params["accesible"] = filtros["accesible"]
 
+    # ==========================================
+    # MUNICIPIO
+    # ==========================================
     if filtros.get("codigo_municipio"):
-        query += " AND rec.codigo_municipio = $codigo"
+
+        conditions.append(
+            "rec.codigo_municipio = $codigo"
+        )
+
         params["codigo"] = filtros["codigo_municipio"]
 
+    # ==========================================
+    # TIPO DETALLE
+    # ==========================================
     if filtros.get("tipo_detalle"):
-        query += " AND rec.tipo = $tipo_detalle"
+
+        conditions.append(
+            "rec.tipo IN $tipo_detalle"
+        )
+
         params["tipo_detalle"] = filtros["tipo_detalle"]
 
+    # ==========================================
+    # AGUA
+    # ==========================================
     if filtros.get("agua") is not None:
-        query += " AND rec.agua = $agua"
+
+        conditions.append(
+            "rec.agua = $agua"
+        )
+
         params["agua"] = filtros["agua"]
 
+    # ==========================================
+    # ELECTRICIDAD
+    # ==========================================
     if filtros.get("electricidad") is not None:
-        query += " AND rec.electricidad = $electricidad"
+
+        conditions.append(
+            "rec.electricidad = $electricidad"
+        )
+
         params["electricidad"] = filtros["electricidad"]
 
+    # ==========================================
+    # COMEDOR
+    # ==========================================
     if filtros.get("comedor") is not None:
-        query += " AND rec.comedor = $comedor"
+
+        conditions.append(
+            "rec.comedor = $comedor"
+        )
+
         params["comedor"] = filtros["comedor"]
 
+    # ==========================================
+    # JUEGOS INFANTILES
+    # ==========================================
     if filtros.get("juegos") is not None:
-        query += " AND rec.juegos_infantiles = $juegos"
+
+        conditions.append(
+            "rec.juegos_infantiles = $juegos"
+        )
+
         params["juegos"] = filtros["juegos"]
-        
+
+    # ==========================================
+    # MEDIA MÍNIMA
+    # ==========================================
     if filtros.get("media_min") is not None:
-        query += " AND rec.media >= $media_min"
+
+        conditions.append(
+            "rec.media >= $media_min"
+        )
+
         params["media_min"] = filtros["media_min"]
 
+    # ==========================================
+    # MEDIA MÁXIMA
+    # ==========================================
     if filtros.get("media_max") is not None:
-        query += " AND rec.media <= $media_max"
+
+        conditions.append(
+            "rec.media <= $media_max"
+        )
+
         params["media_max"] = filtros["media_max"]
 
+    # ==========================================
+    # CONSTRUCCIÓN FINAL DEL WHERE
+    # ==========================================
+    if conditions:
+
+        query += "\nWHERE " + "\nAND ".join(conditions)
+
+    # ==========================================
+    # QUERY FINAL
+    # ==========================================
     query += """
+
     RETURN DISTINCT rec
-    ORDER BY rec.media DESC, rec.likes DESC
+
+    ORDER BY
+        rec.media DESC,
+        rec.likes DESC
+
     LIMIT 20
     """
 
@@ -86,29 +186,72 @@ def getRecomendacionesFiltradas(user_id, filtros):
 # ==============================
 def getTopLugares(filtros):
 
-    label = "Lugar"
-
-    if filtros.get("tipo") in ["Parque", "Lonja"]:
-        label = f"Lugar:{filtros['tipo']}"
-
-    query = f"""
-    MATCH (l:{label})
-    WHERE l.media IS NOT NULL
+    query = """
+    MATCH (l:Lugar)
     """
 
     params = {}
 
+    conditions = [
+        "l.media IS NOT NULL"
+    ]
+
+    # ==========================================
+    # LABELS
+    # ==========================================
+    tipos_validos = [
+        t for t in (filtros.get("tipo") or [])
+        if t in ["Parque", "Lonja"]
+    ]
+
+    # Solo optimizamos si hay uno único
+    if len(tipos_validos) == 1:
+
+        query = query.replace(
+            "(l:Lugar)",
+            f"(l:{tipos_validos[0]})"
+        )
+
+    # ==========================================
+    # MUNICIPIO
+    # ==========================================
     if filtros.get("codigo_municipio"):
-        query += " AND l.codigo_municipio = $codigo"
+
+        conditions.append(
+            "l.codigo_municipio = $codigo"
+        )
+
         params["codigo"] = filtros["codigo_municipio"]
 
+    # ==========================================
+    # TIPO DETALLE
+    # ==========================================
     if filtros.get("tipo_detalle"):
-        query += " AND l.tipo = $tipo_detalle"
+
+        conditions.append(
+            "l.tipo IN $tipo_detalle"
+        )
+
         params["tipo_detalle"] = filtros["tipo_detalle"]
 
+    # ==========================================
+    # WHERE FINAL
+    # ==========================================
+    if conditions:
+
+        query += "\nWHERE " + "\nAND ".join(conditions)
+
+    # ==========================================
+    # RETURN
+    # ==========================================
     query += """
+
     RETURN l
-    ORDER BY rec.media DESC, rec.likes DESC
+
+    ORDER BY
+        l.media DESC,
+        l.likes DESC
+
     LIMIT 20
     """
 

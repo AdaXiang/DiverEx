@@ -18,6 +18,32 @@
     padding-bottom: 10px;
 }
 
+.filtros-panel-estatico .menu {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.filtros-panel-estatico .menu button {
+  flex: 1;
+  padding: 0.4rem;
+
+  border: none;
+  border-radius: 0.3rem;
+
+  background: var(--color-secondary);
+  color: white;
+
+  font-weight: bold;
+  font-size: 1rem;
+
+  cursor: pointer;
+}
+
+.filtros-panel-estatico .menu button.active {
+  background: var(--color-primary);
+}
+
 .filtro-item {
     display: flex;
     align-items: center;
@@ -172,4 +198,55 @@
 
 .checkbox-item:hover {
     color: #2563eb;
+}
+
+/* ==========================================
+   SELECT VALORACIÓN
+========================================== */
+
+.select-rating-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.rating-select {
+    flex: 1;
+
+    padding: 10px 12px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+
+    background: white;
+
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+
+    cursor: pointer;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.rating-select:hover {
+    border-color: #2563eb;
+}
+
+.rating-select:focus {
+    outline: none;
+
+    border-color: #2563eb;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(37, 99, 235, 0.15);
+}
+
+.rating-separator {
+    color: #9ca3af;
+    font-weight: bold;
+    font-size: 16px;
 }

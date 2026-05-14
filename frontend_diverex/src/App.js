@@ -23,6 +23,20 @@ function MainLayout() {
     estadosSeleccionados: ['B', 'R', 'M', 'E'],
     busquedaTexto: ""
   });
+  const [modoFiltro, setModoFiltro] = useState(true);
+  const [recommendationFilters, setRecommendationFilters] = useState({
+      tipo: [],
+      estado: [],
+      accesible: false,
+      //codigo_municipio: "",
+      tipo_detalle: [],
+      //agua: false,
+      //electricidad: false,
+      //comedor: false,
+      //juegos: null,
+      media_min: 1,
+      media_max: 5
+  });
 
   const [inputValue, setInputValue] = useState("");
   const ejecutarBusqueda = () => {
@@ -35,7 +49,14 @@ function MainLayout() {
   console.log("id del lugar seleccionado en MainLayout:", lugarId);
   return (
     <div className="App">
-      <MapView setUserLocation={setUserLocation} filters={filters} userLocation={userLocation} setLugarId={setLugarId} />
+      <MapView 
+        setUserLocation={setUserLocation} 
+        filters={filters} 
+        modoFiltro={modoFiltro} 
+        recommendationFilters={recommendationFilters}
+        userLocation={userLocation} 
+        setLugarId={setLugarId} 
+      />
 
       {/* ALERTA GLOBAL */}
       {alertData && (
@@ -81,6 +102,10 @@ function MainLayout() {
           filters={filters}
           setFilters={setFilters}
           userLocation={userLocation}
+          modoFiltro={modoFiltro}
+          setModoFiltro={setModoFiltro}
+          recommendationFilters={recommendationFilters}
+          setRecommendationFilters={setRecommendationFilters}
         />
       </div>
 
