@@ -50,18 +50,12 @@ export default function GeoJSONLayer({ filters, modoFiltro, recommendationFilter
     useEffect(() => {
         const fetchDatosFiltrados = async () => {
             try {
+                let listId = []
                 //recomendaciones
                 if (!modoFiltro) {
-                    await console.log("filtros: ",recommendationFilters)
                     const recomendaciones = await getFilteredRecommendations(user.id,recommendationFilters)
-                    await console.log("recomendaciones: ",recomendaciones.data)
-                     const diccionario =
-                        await Object.fromEntries(
-                            recomendaciones.data.map(item => [
-                                item.id
-                            ])
-                        );
-                    await console.log("recomendacionesId: ",diccionario)
+                    listId = await recomendaciones.data.map(item => item.id);
+                    await console.log("recomendacionesId: ",listId)
                 }
 
                 const geojson = await getLugaresFiltrados({

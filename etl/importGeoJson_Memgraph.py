@@ -130,7 +130,7 @@ def create_random_relations(n_users):
 
     #Bucle de relaciones random
     for i in range(n_users):
-        for _ in range(random.randint(1, 5)):
+        for _ in range(random.randint(1, 5*n_users)):
 
             #Valores al azar
             user_id = f"{i}"
@@ -235,7 +235,7 @@ def main():
         load_geojson(file_path, tipo)
 
     #Controlamos el numero de usuarios random a crear
-    n_users = 20
+    n_users = 200
 
     create_users(n_users)
     create_random_relations(n_users)
