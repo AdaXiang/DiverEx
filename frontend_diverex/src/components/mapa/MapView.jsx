@@ -1,11 +1,8 @@
-// MapView.jsx
-import { useState } from "react";
+import { useEffect, useMemo } from "react";
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import GeoJSONLayer from "./GeoJSONLayer";
 import LocationMarker from "./LocationMarker";
-import Filtros from "../filtros/Filtros";
 import "./MapView.css";
-
 import "leaflet/dist/leaflet.css";
 
 function BotonCentrar({ userLocation }) {
@@ -15,12 +12,11 @@ function BotonCentrar({ userLocation }) {
         if (userLocation) {
             map.flyTo([userLocation.lat, userLocation.lng], 16, {
                 animate: true,
-                duration: 1.5 // Segundos que tarda la animación
+                duration: 1.5
             });
         }
     };
 
-    // Si aún no tenemos la ubicación, no mostramos el botón
     if (!userLocation) return null;
 
     return (
@@ -34,20 +30,68 @@ function BotonCentrar({ userLocation }) {
     );
 }
 
-export default function MapView({ setUserLocation, filters, modoFiltro, recommendationFilters, userLocation, setLugarId }) {
+function MapController({ selectedFeature }) {
+    const map = useMap();
+
+    useEffect(() => {
+        if (selectedFeature && selectedFeature.coords) {
+            const [lon, lat] = selectedFeature.coords;
+            console.log("Volando a:", lat, lon); // Para que veas en consola si se ejecuta
+
+            map.flyTo([lat, lon], 18, {
+                animate: true,
+                duration: 1.5,
+            });
+        }
+    }, [selectedFeature, map]);
+
+    return null;
+}
+
+export default function MapView({
+    setUserLocation,
+    filters,
+    modoFiltro, 
+    recommendationFilters,
+    userLocation,
+    setLugarId,
+    setLugaresFiltrados,
+    lugaresFiltrados,
+    lugarId
+}) {
+
+    const selectedFeature = useMemo(() => {
+        if (!lugarId || !lugaresFiltrados) return null;
+
+        // Buscamos el objeto en la lista
+        const item = lugaresFiltrados.find(f => (f.id === lugarId || f.properties?.id === lugarId));
+
+        if (!item) return null;
+
+        return {
+            coords: item.geo_point?.coordinates || item.coordinates
+        };
+    }, [lugarId, lugaresFiltrados]);
 
     return (
         <div style={{ position: "relative", width: "100%", height: "100vh", overflow: "hidden" }}>
-
-            {/* MAPA */}
             <MapContainer
                 center={[38.956, -5.861]}
                 zoom={13}
                 style={{ height: "100%", width: "100%", zIndex: 1 }}
-                preferCanvas={true}
             >
                 <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
+                {/* Pasamos el objeto normalizado con las coordenadas */}
+                <MapController selectedFeature={selectedFeature} />
+
+                <GeoJSONLayer
+                    filters={filters}
+                    userLocation={userLocation}
+                    setLugarId={setLugarId}
+                    setLugaresFiltrados={setLugaresFiltrados}
+                    lugarId={lugarId}
+                />
 
                 <GeoJSONLayer filters={filters} modoFiltro={modoFiltro} recommendationFilters={recommendationFilters} userLocation={userLocation} setLugarId={setLugarId} />
                 <LocationMarker setUserLocation={setUserLocation} />

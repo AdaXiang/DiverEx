@@ -7,12 +7,13 @@ import { getPlace } from "../../apiServices/placesInfo";
 import { getLikes, like, unlike } from "../../apiServices/likes";
 import { getFavorites, addFavorite, removeFavorite } from "../../apiServices/favorites";
 import { getVisits, createVisit, deleteVisit } from "../../apiServices/visits";
+import { getLugar } from "../../apiServices/lugares";
 
 export default function LugarCard({ lugarId, onClose, setAlert, showComment, setShowComment }) {
   const { user } = useContext(AuthContext);
 
   const [lugar, setLugar] = useState(null);
-
+  const [datosLugar, setDatosLugar] = useState(null);
   const [liked, setLiked] = useState(false);
   const [favorite, setFavorite] = useState(false);
   const [visited, setVisited] = useState(false);
@@ -39,6 +40,9 @@ export default function LugarCard({ lugarId, onClose, setAlert, showComment, set
       try {
         const lugarRes = await getPlace(lugarId);
         setLugar(lugarRes.data);
+        const datosRes = await getLugar(lugarId);
+        console.log("Datos del lugar:", datosRes);
+        setDatosLugar(datosRes);
 
         const [likesRes, favRes, visitRes] = await Promise.all([
           getLikes(user.id),
@@ -111,6 +115,9 @@ export default function LugarCard({ lugarId, onClose, setAlert, showComment, set
   };
 
   if (!lugar) return null;
+  if (!datosLugar) return <p>Cargando datos del sitio...</p>;
+  const feature = datosLugar.features[0];
+  const info = feature.properties;
 
   return (
     <div className="lugar-card">
@@ -119,8 +126,11 @@ export default function LugarCard({ lugarId, onClose, setAlert, showComment, set
       {/* imagen */}
       {/* <div className="lugar-img" /> */}
 
+
       <div className="lugar-content">
+        <br />
         <h3 className="lugar-title">{lugar.name}</h3>
+        <h4 className="lugar-title">{info.municipio}</h4>
 
         {/* ⭐ info principal (NO TOCADA) */}
         <div className="lugar-meta">
@@ -144,6 +154,14 @@ export default function LugarCard({ lugarId, onClose, setAlert, showComment, set
           {lugar.comedor && <span>🍽️</span>}
           {lugar.electricidad && <span>⚡</span>}
         </div>
+
+        <div>
+          {info.superficie_cubierta !== 0 && (
+            <p>🗺️ Superficie cubierta: {info.superficie_cubierta} m²</p>
+          )}
+        </div>
+
+
 
         {/* 🔥 NUEVO: acciones */}
         <div className="lugar-actions">

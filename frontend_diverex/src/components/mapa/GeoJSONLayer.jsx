@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useContext } from "react";
+import { useEffect, useState, useMemo, useRef, useContext } from "react";
 import { GeoJSON, Marker, Popup, useMap } from "react-leaflet";
 import MarkerClusterGroup from 'react-leaflet-cluster';
 import { getLugaresFiltrados } from "../../apiServices/lugares.js";
@@ -24,10 +24,11 @@ const COLORES_DATASET = {
     "default": "#6b7280"
 };
 
-export default function GeoJSONLayer({ filters, modoFiltro, recommendationFilters, userLocation, setLugarId }) {
+export default function GeoJSONLayer({ filters, modoFiltro, recommendationFilters, userLocation, setLugarId, setLugaresFiltrados, lugarId }) {
     const { user } = useContext(AuthContext);
     const map = useMap();
     const [data, setData] = useState(null);
+    const markerRefs = useRef({});
 
     const centrarMapa = (lat, lon) => {
         map.flyTo([lat, lon], 16, {
@@ -64,8 +65,18 @@ export default function GeoJSONLayer({ filters, modoFiltro, recommendationFilter
                     lon: userLocation?.lng
                 });
 
-                console.log("Datos filtrados recibidos:", geojson);
                 setData(geojson);
+                console.log("Datos GeoJSON recibidos:", geojson);
+
+                if (setLugaresFiltrados && geojson.features) {
+                    //const datosParaLista = geojson.features.map(f => f.properties);
+                    const datosParaLista = geojson.features.map(f => ({
+                        ...f.properties,
+                        coordinates: f.geo_point?.coordinates // Guardamos las coordenadas explícitamente
+                    }));
+                    setLugaresFiltrados(datosParaLista);
+                }
+
             } catch (error) {
                 console.error("Error en servidor:", error);
 
@@ -89,6 +100,27 @@ export default function GeoJSONLayer({ filters, modoFiltro, recommendationFilter
 
     }, [filters,modoFiltro,recommendationFilters, userLocation]);
 
+    useEffect(() => {
+        if (!lugarId || !markerRefs.current[lugarId]) return;
+
+        const marker = markerRefs.current[lugarId];
+
+        const abrirPopupFinal = () => {
+            if (marker) {
+                marker.openPopup();
+            }
+        };
+
+        map.once('moveend', () => {
+            setTimeout(abrirPopupFinal, 100);
+        });
+
+        if (map.getBounds().contains(marker.getLatLng())) {
+            abrirPopupFinal();
+        }
+
+    }, [lugarId, map]);
+
 
     if (!data) return null;
 
@@ -107,6 +139,7 @@ export default function GeoJSONLayer({ filters, modoFiltro, recommendationFilter
             <MarkerClusterGroup chunkedLoading>
                 {data.features?.map((feature, index) => {
                     const coordinates = feature.geo_point?.coordinates;
+                    const itemId = feature.properties?.id || feature.id;
 
                     if (coordinates && coordinates.length === 2) {
                         const [lon, lat] = coordinates;
@@ -115,6 +148,11 @@ export default function GeoJSONLayer({ filters, modoFiltro, recommendationFilter
                             <Marker
                                 key={feature.id || index}
                                 position={[lat, lon]}
+                                ref={(ref) => {
+                                    if (ref && itemId) {
+                                        markerRefs.current[itemId] = ref;
+                                    }
+                                }}
                                 eventHandlers={{
                                     click: () => {
                                         // Centrar el mapa en la ubicación del marcador

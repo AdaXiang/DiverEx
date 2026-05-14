@@ -103,7 +103,7 @@ class LugarDAO:
 
         payload = {
             "query": {
-                "field": "geo_point.coordinates",
+                "field": "geo_point",
                 "location": {"lon": float(lon), "lat": float(lat)},
                 "distance": f"{radius_km}km"
             },
@@ -156,47 +156,38 @@ class LugarDAO:
         WHERE META().id = "{doc_id}"
         """
         return self._execute(query)
-    
-    import requests
+ 
 
     def filter_places(self, lat, lon, distancia_max, acceso_silla_ruedas, zona_infantil, comedor, tipos, estados, nombre, municipio):
-        
-        where_clauses = ["t.type = 'feature'"] # Aseguramos buscar solo los documentos correctos
+    
+        where_clauses = ["t.type = 'feature'"]
+        distance_expr = "NULL"
 
         # ==========================================
-        # 1. FILTRO ESPACIAL (Motor FTS)
+        # 1. FILTRO ESPACIAL
         # ==========================================
         if lat is not None and lon is not None and distancia_max is not None:
-            host = self.url.split(":8093")[0].replace("http://", "")
-            fts_url = f"http://{host}:8094/api/bucket/{self.bucket}/scope/_default/index/idx_geo/query"
-            
-            payload = {
-                "query": {
-                    "field": "geo_point.coordinates",
-                    "location": {"lon": float(lon), "lat": float(lat)},
-                    "distance": f"{distancia_max}km"
-                },
-                "size": 5000
+            fts_query = {
+                "field": "geo_point.coordinates",
+                "location": {"lon": float(lon), "lat": float(lat)},  # objeto, no array
+                "distance": f"{distancia_max}km"
             }
+            query_str = json.dumps(fts_query)
             
-            res = requests.post(fts_url, auth=self.auth, json=payload)
-            if res.status_code == 200:
-                hits = res.json().get("hits", [])
-                doc_ids = [hit.get("id") for hit in hits if hit.get("id")]
-                
-                # Si el usuario pide un radio y no hay nada, cortamos y devolvemos vacío inmediatamente
-                if not doc_ids:
-                    return []
-                    
-                # Si hay lugares cerca, obligamos a N1QL a buscar SOLO entre estos IDs
-                ids_str = ", ".join([f"'{i}'" for i in doc_ids])
-                where_clauses.append(f"META(t).id IN [{ids_str}]")
-            else:
-                print("Error en FTS:", res.text)
-                # Si FTS falla, puedes decidir si retornar [] o continuar sin el filtro de distancia
+            # Nombre completo del índice
+            where_clauses.append(f"SEARCH(t, {query_str}, {{\"index\": \"places._default.idx_geo\"}})")
+            
+            # Haversine en lugar de SEARCH_META (más fiable con geopoint)
+            distance_expr = f"""ROUND(
+                ACOS(
+                    SIN(RADIANS({float(lat)})) * SIN(RADIANS(t.geo_point.coordinates[1])) +
+                    COS(RADIANS({float(lat)})) * COS(RADIANS(t.geo_point.coordinates[1])) *
+                    COS(RADIANS(t.geo_point.coordinates[0]) - RADIANS({float(lon)}))
+                ) * 6371000, 0
+            )"""
 
         # ==========================================
-        # 2. FILTROS DE ATRIBUTOS (Motor N1QL)
+        # 2. FILTROS DE ATRIBUTOS
         # ==========================================
         if acceso_silla_ruedas is not None:
             val = "TRUE" if acceso_silla_ruedas else "FALSE"
@@ -210,12 +201,12 @@ class LugarDAO:
             val = "TRUE" if comedor else "FALSE"
             where_clauses.append(f"t.properties.comedor = {val}")
 
-        if estados: 
+        if estados:
             estados_str = ", ".join([f"'{e}'" for e in estados])
             where_clauses.append(f"t.properties.estado IN [{estados_str}]")
 
-        if tipos: 
-            tipos_str = ", ".join([f"'{t}'" for t in tipos])
+        if tipos:
+            tipos_str = ", ".join([f"'{ti}'" for ti in tipos])  # evitamos shadowing de 't'
             where_clauses.append(f"t.tipo_lugar IN [{tipos_str}]")
 
         if nombre:
@@ -229,9 +220,19 @@ class LugarDAO:
         # ==========================================
         where_statement = " AND ".join(where_clauses)
         
+        # ORDER BY solo si hay distancia
+        order_by = "ORDER BY distancia_metros ASC" if lat is not None and lon is not None else ""
+        
         query = f"""
-            SELECT META(t).id AS id, t.*
-            FROM `{self.bucket}` t
-            WHERE {where_statement}
+        SELECT
+            META(t).id AS id,
+            {distance_expr} AS distancia_metros,
+            ROUND(({distance_expr}) / 1000, 2) AS distancia_km,
+            t.*
+        FROM `{self.bucket}`._default._default AS t
+        WHERE {where_statement}
+        {order_by}
         """
+        
         return self._execute(query)
+           

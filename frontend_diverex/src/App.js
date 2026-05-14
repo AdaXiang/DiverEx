@@ -7,13 +7,18 @@ import Filtros from "./components/filtros/Filtros";
 import { AuthProvider, AuthContext } from "./context/AuthContext";
 import { useContext, useState } from "react";
 import LugarCard from "./components/lugar/LugarCard";
-import ComentariosPanel from "./components/comentarios/ComentariosPanel"
+import ComentariosPanel from "./components/comentarios/ComentariosPanel";
+import List from "./components/lista/List";
 
 function MainLayout() {
   const { user } = useContext(AuthContext);
   const [lugarId, setLugarId] = useState(null);
   const [showComment, setShowComment] = useState(false);
   const [userLocation, setUserLocation] = useState(null);
+
+  // NUEVO: Estado para guardar la lista de lugares filtrados
+  const [lugaresFiltrados, setLugaresFiltrados] = useState([]);
+
   const [filters, setFilters] = useState({
     sillaRuedas: false,
     zonaInfantil: false,
@@ -43,12 +48,11 @@ function MainLayout() {
     setFilters({ ...filters, busquedaTexto: inputValue });
   };
 
-  //estado global de alertas
   const [alertData, setAlertData] = useState(null);
 
-  console.log("id del lugar seleccionado en MainLayout:", lugarId);
   return (
     <div className="App">
+      {/* Añadimos setLugaresFiltrados como prop al MapView */}
       <MapView 
         setUserLocation={setUserLocation} 
         filters={filters} 
@@ -56,9 +60,11 @@ function MainLayout() {
         recommendationFilters={recommendationFilters}
         userLocation={userLocation} 
         setLugarId={setLugarId} 
+        setLugaresFiltrados={setLugaresFiltrados}
+        lugaresFiltrados={lugaresFiltrados}
+        lugarId={lugarId}
       />
 
-      {/* ALERTA GLOBAL */}
       {alertData && (
         <Alert
           title={alertData.title}
@@ -88,13 +94,8 @@ function MainLayout() {
       </div>
 
       <div id="panelFlotante">
-        {/* Login/Logup si no datos guardados */}
         {!user && <LoginModal setAlert={setAlertData} />}
-
-        {/* Panel si hay usuario */}
         {user && <UserPanel setAlert={setAlertData} setLugarId={setLugarId} />}
-
-        {/* Línea separadora opcional para que quede más limpio visualmente */}
         <hr style={{ width: "100%", border: "none", borderTop: "1px solid #e5e7eb", margin: "10px 0" }} />
 
         {/* COMPONENTE DE FILTROS MODULAR Y ESTÁTICO */}
@@ -110,11 +111,37 @@ function MainLayout() {
       </div>
 
       <div id="panelFlotanteDos">
-        {/* Panel si se busca un lugar */}
-        {lugarId && <LugarCard lugarId={lugarId} setAlert={setAlertData} showComment={showComment} setShowComment={setShowComment} onClose={() => setLugarId(null)} />}
+        {(lugarId || lugaresFiltrados.length > 0) && (
+          <div className="columna-blanca-unica">
 
-        {/* Panel muetra los comentarios */}
-        {showComment && lugarId && <ComentariosPanel lugarId={lugarId} setAlert={setAlertData} />}
+            {/* DETALLE DEL LUGAR */}
+            {lugarId && (
+              <LugarCard
+                lugarId={lugarId}
+                setAlert={setAlertData}
+                showComment={showComment}
+                setShowComment={setShowComment}
+                onClose={() => setLugarId(null)}
+              />
+            )}
+
+            {/* COMENTARIOS */}
+            {showComment && lugarId && (
+              <ComentariosPanel lugarId={lugarId} setAlert={setAlertData} />
+            )}
+
+            {/* LISTA DE RESULTADOS */}
+            {lugaresFiltrados.length > 0 && (
+              <div className="seccion-resultados-lista">
+                <h3 className="titulo-resultados">
+                  Resultados ({lugaresFiltrados.length})
+                </h3>
+                <List items={lugaresFiltrados} setLugarId={setLugarId} />
+              </div>
+            )}
+
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 import "./List.css";
 import Item from "../item/Item";
 
-export default function List({ items , setLugarId}) {
+export default function List({ items, setLugarId }) {
   if (!items || items.length === 0) {
     return <p className="empty">No hay datos, interactua más por la pagina :D </p>;
   }
