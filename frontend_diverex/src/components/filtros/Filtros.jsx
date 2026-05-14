@@ -163,15 +163,13 @@ export default function Filtros({ filters, setFilters, userLocation, modoFiltro,
             ):(
                 <>
                 {/* MODO FILTRO RECOMENDACIONES */}
-                {/* Accesibilidad */}
+                    {/* Accesibilidad */}
                     <label className="filtro-item">
-                        <input
-                            type="checkbox"
-                            checked={recommendationFilters.accesible}
+                        <input type="checkbox" checked={recommendationFilters.accesible}
                             onChange={(e) =>
                                 setRecommendationFilters({
                                     ...recommendationFilters,
-                                    accesible: e.target.checked
+                                    accesible: e.target.checked ? true : null
                                 })
                             }
                         />
@@ -179,64 +177,56 @@ export default function Filtros({ filters, setFilters, userLocation, modoFiltro,
                     </label>
 
                     {/* Juegos */}
-                    {/*<label className="filtro-item">
-                        <input
-                            type="checkbox"
-                            checked={recommendationFilters.juegos}
+                    <label className="filtro-item">
+                        <input type="checkbox" checked={recommendationFilters.juegos}
                             onChange={(e) =>
                                 setRecommendationFilters({
                                     ...recommendationFilters,
-                                    juegos: e.target.checked
+                                    juegos: e.target.checked ? true : null
                                 })
                             }
                         />
                         Zonas infantiles
-                    </label>*/}
+                    </label>
 
                     {/* Comedor */}
-                    {/* <label className={`filtro-item ${soloLonjas ? 'disabled' : ''}`} >
-                        <input type="checkbox"  disabled={soloLonjas} checked={ !soloLonjas && recommendationFilters.comedor}
-                            onChange={(e) => {
-                                if (soloLonjas) return;
-
+                    <label className="filtro-item">
+                        <input type="checkbox" checked={recommendationFilters.comedor}
+                            onChange={(e) =>
                                 setRecommendationFilters({
                                     ...recommendationFilters,
-                                    comedor: e.target.checked
-                                });
-                            }}
+                                    comedor: e.target.checked ? true : null
+                                })
+                            }
                         />
                         Comedor
-                    </label>*/}
+                    </label>
 
                     {/* Agua */}
-                    {/*<label className={`filtro-item ${soloLonjas ? 'disabled' : ''}`} >
-                        <input type="checkbox"  disabled={soloLonjas} checked={ !soloLonjas && recommendationFilters.agua }
-                            onChange={(e) => {
-                                if (soloLonjas) return;
-
+                    <label className="filtro-item">
+                        <input type="checkbox" checked={recommendationFilters.agua}
+                            onChange={(e) =>
                                 setRecommendationFilters({
                                     ...recommendationFilters,
-                                    agua: e.target.checked 
-                                });
-                            }}
+                                    agua: e.target.checked ? true : null
+                                })
+                            }
                         />
                         Agua
-                    </label>*/}
+                    </label>
 
                     {/* Electricidad */}
-                    {/*<label className={`filtro-item ${soloLonjas ? 'disabled' : ''}`} >
-                        <input type="checkbox"  disabled={soloLonjas} checked={ !soloLonjas && recommendationFilters.electricidad }
-                            onChange={(e) => {
-                                if (soloLonjas) return;
-
+                    <label className="filtro-item">
+                        <input type="checkbox" checked={recommendationFilters.electricidad}
+                            onChange={(e) =>
                                 setRecommendationFilters({
                                     ...recommendationFilters,
-                                    electricidad: e.target.checked 
-                                });
-                            }}
+                                    electricidad: e.target.checked ? true : null
+                                })
+                            }
                         />
                         Electricidad
-                    </label> */}
+                    </label>
 
                     {/* Estado */}
                     <div className="filtro-grupo">
@@ -449,6 +439,29 @@ export default function Filtros({ filters, setFilters, userLocation, modoFiltro,
                         </div>
 
                     </div>
+
+                    {/* Filtro Distancia */}
+                    <div className="filtro-grupo">
+                        <label>
+                            Distancia máxima: <strong>{filters.distanciaMax} km</strong>
+                        </label>
+                        <input
+                            type="range"
+                            min="1" max="150" step="1"
+                            value={filters.distanciaMax}
+                            onChange={(e) => setFilters({ ...filters, distanciaMax: Number(e.target.value) })}
+                            disabled={!userLocation}
+                        />
+
+                        {/* Mensaje si el GPS aún no ha respondido */}
+                        {userLocation ? (
+                            <p className="mensaje-informativo"> Coordenadas: {userLocation.lat.toFixed(4)}, {userLocation.lng.toFixed(4)} </p>
+                        ) : (
+                            <span className="mensaje-error">Calculando tu ubicación...</span>
+                        )}
+                    </div>
+
+
                 </>
             )}
         </div>

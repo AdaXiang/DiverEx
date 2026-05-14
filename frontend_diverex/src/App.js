@@ -32,15 +32,16 @@ function MainLayout() {
   const [recommendationFilters, setRecommendationFilters] = useState({
       tipo: [],
       estado: [],
-      accesible: false,
+      accesible: null,
       //codigo_municipio: "",
       tipo_detalle: [],
-      //agua: false,
-      //electricidad: false,
-      //comedor: false,
-      //juegos: null,
       media_min: 1,
-      media_max: 5
+      media_max: 5,
+      //caracteristicas parque
+      agua: null,
+      electricidad: null,
+      comedor: null,
+      juegos: null
   });
 
   const [inputValue, setInputValue] = useState("");
