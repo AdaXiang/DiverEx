@@ -90,7 +90,7 @@ class LugarService:
     def search_places(self, lat=None, lon=None, distancia_max=None, 
                   acceso_silla_ruedas=None, zona_infantil=None, 
                   comedor=None, tipos=None, estados=None, 
-                  nombre=None, municipio=None):
+                  nombre=None, municipio=None, ids_recomendaciones=None):
 
         results = []
         raw_data = self.dao.filter_places(
@@ -103,7 +103,8 @@ class LugarService:
             tipos=tipos,
             estados=estados,
             nombre=nombre,
-            municipio=municipio
+            municipio=municipio,
+            ids_recomendaciones=ids_recomendaciones
         )
 
         if not raw_data:

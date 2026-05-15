@@ -10,10 +10,12 @@ export const getLugares = async () => {
     }
 };
 
-export const getLugaresFiltrados = async (filters) => {
+export const getLugaresFiltrados = async (filters, ids_recomendaciones) => {
     try {
         // Usamos URLSearchParams para asegurar compatibilidad total con FastAPI
         const params = new URLSearchParams();
+
+        console.log("Filtros enviados al API:", filters, "IDs de recomendaciones:", ids_recomendaciones);
 
         // booleanos
         if (filters.sillaRuedas) params.append('acceso_silla_ruedas', 'true');
@@ -36,10 +38,10 @@ export const getLugaresFiltrados = async (filters) => {
             filters.tiposSeleccionados.forEach(t => params.append('tipo_lugar', t));
         }
 
-
         // Lista de recomendaciones
-        if (filters.recomendaciones) {
-            filters.recomendaciones.forEach(r => params.append('recomendacion', r));
+        if (ids_recomendaciones && ids_recomendaciones.length > 0) {
+            // FastAPI leerá esto como una lista: ?recomendacion=id1&recomendacion=id2
+            ids_recomendaciones.forEach(id => params.append('recomendacion', id));
         }
 
         // texto

@@ -134,7 +134,7 @@ export default function LugarCard({ lugarId, onClose, setAlert, showComment, set
 
         {/* ⭐ info principal (NO TOCADA) */}
         <div className="lugar-meta">
-          <span>⭐ {lugar.media ?? "N/A"}</span>
+          <span>⭐ {lugar.media != null ? Number(lugar.media).toFixed(1) : "N/A"}</span>
           <span>❤️ {lugar.likes ?? 0}</span>
         </div>
 
