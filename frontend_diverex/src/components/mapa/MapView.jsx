@@ -57,7 +57,8 @@ export default function MapView({
     setLugarId,
     setLugaresFiltrados,
     lugaresFiltrados,
-    lugarId
+    lugarId,
+    setLoading
 }) {
 
     const selectedFeature = useMemo(() => {
@@ -92,6 +93,7 @@ export default function MapView({
                     setLugarId={setLugarId}
                     setLugaresFiltrados={setLugaresFiltrados} // Ahora este componente sí podrá llenar la lista
                     lugarId={lugarId}
+                    setLoading={setLoading}
                 />
                 <LocationMarker setUserLocation={setUserLocation} />
                 <BotonCentrar userLocation={userLocation} />

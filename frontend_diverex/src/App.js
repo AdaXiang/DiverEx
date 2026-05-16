@@ -3,6 +3,7 @@ import MapView from "./components/mapa/MapView";
 import LoginModal from "./components/loginup/LoginModal";
 import UserPanel from "./components/user/UserPanel";
 import Alert from "./components/alerta/Alert";
+import Loading from "./components/carga/Loading";
 import Filtros from "./components/filtros/Filtros";
 import { AuthProvider, AuthContext } from "./context/AuthContext";
 import { useContext, useState } from "react";
@@ -50,6 +51,7 @@ function MainLayout() {
   };
 
   const [alertData, setAlertData] = useState(null);
+  const [loading, setLoading] = useState({ visible: false, text: "Cargando..." });
 
   return (
     <div className="App">
@@ -64,6 +66,7 @@ function MainLayout() {
         setLugaresFiltrados={setLugaresFiltrados}
         lugaresFiltrados={lugaresFiltrados}
         lugarId={lugarId}
+        setLoading={setLoading}
       />
 
       {alertData && (
@@ -143,6 +146,8 @@ function MainLayout() {
 
           </div>
         )}
+
+        <Loading visible={loading.visible}  text={loading.text} />
       </div>
     </div>
   );

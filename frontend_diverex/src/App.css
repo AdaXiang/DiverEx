@@ -15,7 +15,7 @@
   height: auto;
   max-height: 100%;
   background-color: white;
-  z-index: 9999;
+  z-index: 1000;
   overflow-y: auto;
 }
 
@@ -84,7 +84,7 @@
   left: 50%;
   transform: translateX(-50%);
   /* SUBE EL Z-INDEX AL MÁXIMO */
-  z-index: 9999 !important;
+  z-index: 1000 !important;
   width: 90%;
   max-width: 500px;
 }
