@@ -87,13 +87,13 @@ export default function MapView({
 
                 <GeoJSONLayer
                     filters={filters}
+                    modoFiltro={modoFiltro} 
+                    recommendationFilters={recommendationFilters}
                     userLocation={userLocation}
                     setLugarId={setLugarId}
                     setLugaresFiltrados={setLugaresFiltrados}
                     lugarId={lugarId}
                 />
-
-                <GeoJSONLayer filters={filters} modoFiltro={modoFiltro} recommendationFilters={recommendationFilters} userLocation={userLocation} setLugarId={setLugarId} />
                 <LocationMarker setUserLocation={setUserLocation} />
                 <BotonCentrar userLocation={userLocation} />
             </MapContainer>

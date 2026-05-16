@@ -1,4 +1,4 @@
-import { React, useEffect, useState, useContext } from "react";
+import { React, useContext } from "react";
 import './Filtros.css';
 import { AuthContext } from "../../context/AuthContext";
 
@@ -34,9 +34,6 @@ const detalleToTipo = {
 export default function Filtros({ filters, setFilters, userLocation, modoFiltro, setModoFiltro, recommendationFilters, setRecommendationFilters }) {
 
     const { user } = useContext(AuthContext);
-    //recomendaciones estandar, solo por gusto
-    //control visual
-    const soloLonjas = recommendationFilters.tipo.length === 1 && recommendationFilters.tipo.includes("Lonja");
 
     return (
         <div className="filtros-panel-estatico">

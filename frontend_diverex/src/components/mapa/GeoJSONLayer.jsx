@@ -98,7 +98,7 @@ export default function GeoJSONLayer({ filters, modoFiltro, recommendationFilter
 
         return () => clearTimeout(timer);
 
-    }, [filters,modoFiltro,recommendationFilters, userLocation]);
+    }, [filters,modoFiltro,user.id,recommendationFilters, userLocation,setLugaresFiltrados]);
 
     useEffect(() => {
         if (!lugarId || !markerRefs.current[lugarId]) return;

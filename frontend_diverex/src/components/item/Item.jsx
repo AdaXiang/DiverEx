@@ -23,7 +23,7 @@ export default function Item({ data, setLugarId }) {
     };
 
     const {
-        id,
+        //id,
         name,
         nombre,
         tipo,
