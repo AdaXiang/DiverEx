@@ -56,21 +56,23 @@ export default function GeoJSONLayer({ filters, modoFiltro, recommendationFilter
                 console.log("Modo filtro:", modoFiltro);
                 if (!modoFiltro) {
 
-                    // // 2. Esperamos a la respuesta de la API
-                    // const recomendaciones = await getFilteredRecommendations(user.id, recommendationFilters);
+                    if (!user?.id) {return;}
 
-                    // // 3. Forma segura de extraer el array, cubriendo si tu API 
-                    // // devuelve el objeto response completo o ya devuelve res.data
-                    // const datosArray = recomendaciones.data ? recomendaciones.data : recomendaciones;
+                    const recomendaciones = await getFilteredRecommendations(user.id,recommendationFilters);
+                    listId = recomendaciones.data.map(item => item.id);
 
-                    // // 4. Mapeo síncrono NORMAL (sin await)
-                    // listId = datosArray.map(item => item.id);
-                    listId = ["parques_0", "lonjas_0", "lonjas_1", "parques_1"]
-                    console.log("recomendaciones filtradas:", listId);
+                    //console.log("recomendaciones filtradas:", listId);
 
                     if (listId.length === 0) {
-                        setData({ type: "FeatureCollection", features: [] });
-                        if (setLugaresFiltrados) setLugaresFiltrados([]);
+                        setData({
+                            type: "FeatureCollection",
+                            features: []
+                        });
+
+                        if (setLugaresFiltrados) {
+                            setLugaresFiltrados([]);
+                        }
+
                         return;
                     }
                 }
@@ -114,7 +116,7 @@ export default function GeoJSONLayer({ filters, modoFiltro, recommendationFilter
 
         return () => clearTimeout(timer);
 
-    }, [filters,modoFiltro,user.id,recommendationFilters, userLocation,setLugaresFiltrados]);
+    }, [filters,modoFiltro,user,recommendationFilters, userLocation,setLugaresFiltrados]);
 
     useEffect(() => {
         if (!lugarId || !markerRefs.current[lugarId]) return;
