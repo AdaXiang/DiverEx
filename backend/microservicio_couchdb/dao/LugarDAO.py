@@ -158,7 +158,7 @@ class LugarDAO:
         return self._execute(query)
  
 
-    def filter_places(self, lat, lon, distancia_max, acceso_silla_ruedas, zona_infantil, comedor, tipos, estados, nombre, municipio):
+    def filter_places(self, lat, lon, distancia_max, acceso_silla_ruedas, zona_infantil, comedor, tipos, estados, nombre, municipio, ids_recomendaciones=None):
     
         where_clauses = ["t.type = 'feature'"]
         distance_expr = "NULL"
@@ -208,6 +208,11 @@ class LugarDAO:
         if tipos:
             tipos_str = ", ".join([f"'{ti}'" for ti in tipos])  # evitamos shadowing de 't'
             where_clauses.append(f"t.tipo_lugar IN [{tipos_str}]")
+
+        if ids_recomendaciones:
+            print("IDs de recomendaciones para filtrar:", ids_recomendaciones)
+            ids_str = ", ".join([f"'{i}'" for i in ids_recomendaciones])
+            where_clauses.append(f"META(t).id IN [{ids_str}]")
 
         if nombre:
             where_clauses.append(f"LOWER(t.properties.nombre) LIKE '%{nombre.lower()}%'")

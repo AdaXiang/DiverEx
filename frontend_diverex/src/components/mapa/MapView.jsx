@@ -51,7 +51,7 @@ function MapController({ selectedFeature }) {
 export default function MapView({
     setUserLocation,
     filters,
-    modoFiltro, 
+    modoFiltro,
     recommendationFilters,
     userLocation,
     setLugarId,
@@ -84,14 +84,13 @@ export default function MapView({
 
                 {/* Pasamos el objeto normalizado con las coordenadas */}
                 <MapController selectedFeature={selectedFeature} />
-
                 <GeoJSONLayer
                     filters={filters}
                     modoFiltro={modoFiltro} 
                     recommendationFilters={recommendationFilters}
                     userLocation={userLocation}
                     setLugarId={setLugarId}
-                    setLugaresFiltrados={setLugaresFiltrados}
+                    setLugaresFiltrados={setLugaresFiltrados} // Ahora este componente sí podrá llenar la lista
                     lugarId={lugarId}
                 />
                 <LocationMarker setUserLocation={setUserLocation} />

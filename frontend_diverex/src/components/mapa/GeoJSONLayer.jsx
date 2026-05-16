@@ -53,29 +53,45 @@ export default function GeoJSONLayer({ filters, modoFiltro, recommendationFilter
             try {
                 let listId = []
                 //recomendaciones
+                console.log("Modo filtro:", modoFiltro);
                 if (!modoFiltro) {
-                    const recomendaciones = await getFilteredRecommendations(user.id,recommendationFilters)
-                    listId = await recomendaciones.data.map(item => item.id);
-                    await console.log("recomendacionesId: ",listId)
+
+                    // // 2. Esperamos a la respuesta de la API
+                    // const recomendaciones = await getFilteredRecommendations(user.id, recommendationFilters);
+
+                    // // 3. Forma segura de extraer el array, cubriendo si tu API 
+                    // // devuelve el objeto response completo o ya devuelve res.data
+                    // const datosArray = recomendaciones.data ? recomendaciones.data : recomendaciones;
+
+                    // // 4. Mapeo síncrono NORMAL (sin await)
+                    // listId = datosArray.map(item => item.id);
+                    listId = ["parques_0", "lonjas_0", "lonjas_1", "parques_1"]
+                    console.log("recomendaciones filtradas:", listId);
+
+                    if (listId.length === 0) {
+                        setData({ type: "FeatureCollection", features: [] });
+                        if (setLugaresFiltrados) setLugaresFiltrados([]);
+                        return;
+                    }
                 }
 
                 const geojson = await getLugaresFiltrados({
                     ...filters,
                     lat: userLocation?.lat,
-                    lon: userLocation?.lng
-                });
+                    lon: userLocation?.lng,
+                }, listId);
+
 
                 setData(geojson);
-                console.log("Datos GeoJSON recibidos:", geojson);
 
                 if (setLugaresFiltrados && geojson.features) {
-                    //const datosParaLista = geojson.features.map(f => f.properties);
                     const datosParaLista = geojson.features.map(f => ({
                         ...f.properties,
                         coordinates: f.geo_point?.coordinates // Guardamos las coordenadas explícitamente
                     }));
                     setLugaresFiltrados(datosParaLista);
                 }
+                console.log("Lugares filtrados:", geojson.features?.length || 0);
 
             } catch (error) {
                 console.error("Error en servidor:", error);

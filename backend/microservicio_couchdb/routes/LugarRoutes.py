@@ -45,14 +45,14 @@ async def filter_lugares(
     estado: Optional[List[str]] = Query(None),
     nombre: Optional[str] = Query(None),
     municipio: Optional[str] = Query(None),
+    recomendacion: Optional[List[str]] = Query(None, description="IDs de recomendaciones")
 ):
     # Pasamos TODOS los parámetros a la función maestra
     items =  service.search_places(
         lat=lat, lon=lon, distancia_max=distancia_max,
         acceso_silla_ruedas=acceso_silla_ruedas, zona_infantil=zona_infantil,
         comedor=comedor, tipos=tipo_lugar, estados=estado,
-        nombre=nombre, municipio=municipio
-    )
+        nombre=nombre, municipio=municipio, ids_recomendaciones=recomendacion)
     return to_geojson(items)
 
 #------------------------------
