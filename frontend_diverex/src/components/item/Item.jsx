@@ -35,7 +35,7 @@ export default function Item({ data, setLugarId }) {
     } = data;
 
     return (
-        <div className="item" onClick={() => setLugarId(data.id)}>
+        <div className="item" onClick={() => setLugarId(id)}>
             <div className="item-header">
                 <span className="item-name">{nombre ?? name ?? "Sin nombre"}</span>
                 <span className="item-tipo">{tipoMap[tipo] ?? tipoMap[tipo_lugar]}</span>

@@ -31,5 +31,27 @@ export const getFilteredRecommendations = (userId, params) => {
 };
 
 
-export const getTop = (params) =>
-  api.get("/preferencias/top", { params });
+export const getTop = (params) => {
+
+  // eliminar null, undefined y strings vacíos
+  const cleanParams = Object.fromEntries(
+    Object.entries(params).filter(
+      ([_, value]) =>
+        value !== null &&
+        value !== undefined &&
+        value !== ""
+    )
+  );
+
+  return api.get(
+    `/preferencias/top`,
+    {
+      params: cleanParams,
+
+      paramsSerializer: (params) =>
+        qs.stringify(params, {
+          arrayFormat: "repeat"
+        })
+    }
+  );
+};

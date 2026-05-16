@@ -1,0 +1,482 @@
+import React from "react";
+import "./TopButton.css";
+
+const opcionesTipo = {
+    "Parques": [
+        { id: "PU", label: "Parque urbano" },
+        { id: "PN", label: "Parque no urbano" },
+        { id: "PI", label: "Parque infantil" },
+        { id: "JA", label: "Jardines" },
+        { id: "AN", label: "Naturaleza" },
+        { id: "ZR", label: "Zonas recreativas" },
+    ],
+    "Lonjas": [
+        { id: "LO", label: "Lonja" },
+        { id: "ME", label: "Mercado" },
+        { id: "FE", label: "Feria" }
+    ]
+};
+
+// ==========================
+// MUNICIPIOS
+// ==========================
+const municipios = {
+    "730": "Acedera",
+    "207": "Aceuchal",
+    "940": "Ahillones",
+    "840": "Alange",
+    "170": "Albuera (La)",
+    "510": "Alburquerque",
+    "131": "Alconchel",
+    "393": "Alconera",
+    "894": "Aljucén",
+    "171": "Almendral",
+    "200": "Almendralejo",
+    "850": "Arroyo de San Serván",
+    "329": "Atalaya",
+    "920": "Azuaga",
+
+    // Badajoz (todos mapean a 001–012 → simplificado)
+    "001": "Badajoz",
+    "002": "Badajoz",
+    "003": "Badajoz",
+    "004": "Badajoz",
+    "005": "Badajoz",
+    "006": "Badajoz",
+    "007": "Badajoz",
+    "008": "Badajoz",
+    "009": "Badajoz",
+    "010": "Badajoz",
+    "011": "Badajoz",
+    "012": "Badajoz",
+
+    "160": "Barcarrota",
+    "659": "Baterno",
+    "429": "Benquerencia de la Serena",
+    "930": "Berlanga",
+    "250": "Bienvenida",
+    "394": "Bodonal de la Sierra",
+    "370": "Burguillos del Cerro",
+    "600": "Cabeza del Buey",
+    "293": "Cabeza la Vaca",
+    "810": "Calamonte",
+    "292": "Calera de León",
+    "249": "Calzadilla de los Barros",
+    "460": "Campanario",
+    "443": "Campillo de Llerena",
+    "612": "Capilla",
+    "488": "Carmonita",
+    "770": "Casas de Don Pedro",
+    "960": "Casas de Reina",
+    "680": "Castilblanco",
+    "420": "Castuera",
+    "105": "Cheles",
+    "518": "Codosera (La)",
+    "487": "Cordobilla de Lácara",
+    "469": "Coronada (La)",
+    "196": "Corte de Peleas",
+    "479": "Cristina",
+    "820": "Don Álvaro",
+    "400": "Don Benito",
+    "197": "Entrín Bajo",
+    "860": "Esparragalejo",
+    "439": "Esparragosa de la Serena",
+    "620": "Esparragosa de Lares",
+    "390": "Feria",
+    "340": "Fregenal de la Sierra",
+    "660": "Fuenlabrada de los Montes",
+    "240": "Fuente de Cantos",
+    "980": "Fuente del Arco",
+    "360": "Fuente del Maestre",
+    "280": "Fuentes de León",
+    "690": "Garbayuela",
+    "656": "Garlitos",
+    "870": "Garrovilla (La)",
+    "910": "Granja de Torrehermosa",
+    "470": "Guareña",
+    "714": "Haba (La)",
+    "692": "Helechosa de los Montes",
+    "670": "Herrera del Duque",
+    "441": "Higuera de la Serena",
+    "445": "Higuera de Llerena",
+    "132": "Higuera de Vargas",
+    "350": "Higuera la Real",
+    "226": "Hinojosa del Valle",
+    "228": "Hornachos",
+    "380": "Jerez de los Caballeros",
+    "391": "Lapa (La)",
+    "227": "Llera",
+    "900": "Llerena",
+    "498": "Lobón",
+    "468": "Magacela",
+    "939": "Maguilla",
+    "928": "Malcocinado",
+    "440": "Malpartida de la Serena",
+    "478": "Manchita",
+    "411": "Medellín",
+    "320": "Medina de las Torres",
+    "413": "Mengabril",
+    "800": "Mérida",
+    "891": "Mirandilla",
+    "260": "Monesterio",
+    "291": "Montemolín",
+    "427": "Monterrubio de la Serena",
+    "480": "Montijo",
+    "176": "Morera (La)",
+    "486": "Nava de Santiago (La)",
+    "760": "Navalvillar de Pela",
+    "173": "Nogales",
+    "120": "Oliva de la Frontera",
+    "475": "Oliva de Mérida",
+    "100": "Olivenza",
+    "750": "Orellana de la Sierra",
+    "740": "Orellana la Vieja",
+    "476": "Palomas",
+    "610": "Peñalsordo",
+    "919": "Peraleda del Zaucejo",
+    "630": "Puebla de Alcocer",
+    "490": "Puebla de la Calzada",
+    "477": "Puebla de la Reina",
+    "191": "Puebla de Obando",
+    "310": "Puebla de Sancho Pérez",
+    "906": "Puebla del Maestre",
+    "229": "Puebla del Prior",
+    "184": "Pueblonuevo del Guadiana",
+    "450": "Quintana de la Serena",
+    "970": "Reina",
+    "715": "Rena",
+    "442": "Retamal de Llerena",
+    "225": "Ribera del Fresno",
+    "657": "Risco",
+    "190": "Roca de la Sierra (La)",
+    "174": "Salvaleón",
+    "175": "Salvatierra de los Barros",
+    "893": "San Pedro de Mérida",
+    "500": "San Vicente de Alcántara",
+    "655": "Sancti-Spíritus",
+    "410": "Santa Amalia",
+    "150": "Santa Marta",
+    "230": "Santos de Maimona (Los)",
+    "270": "Segura de León",
+    "650": "Siruela",
+    "209": "Solana de los Barros",
+    "640": "Talarrubias",
+    "140": "Talavera la Real",
+    "133": "Táliga",
+    "658": "Tamurejo",
+    "172": "Torre de Miguel Sesmero",
+    "880": "Torremayor",
+    "210": "Torremejía",
+    "909": "Trasierra",
+    "892": "Trujillanos",
+    "290": "Usagre",
+    "689": "Valdecaballeros",
+    "185": "Valdelacalzada",
+    "474": "Valdetorres",
+    "444": "Valencia de las Torres",
+    "134": "Valencia del Mombuey",
+    "330": "Valencia del Ventoso",
+    "458": "Valle de la Serena",
+    "177": "Valle de Matamoros",
+    "178": "Valle de Santa Ana",
+    "378": "Valverde de Burguillos",
+    "130": "Valverde de Leganés",
+    "927": "Valverde de Llerena",
+    "890": "Valverde de Mérida",
+    "220": "Villafranca de los Barros",
+    "950": "Villagarcía de la Torre",
+    "473": "Villagonzalo",
+    "208": "Villalba de los Barros",
+    "700": "Villanueva de la Serena",
+    "110": "Villanueva del Fresno",
+    "716": "Villar de Rena",
+    "192": "Villar del Rey",
+    "678": "Villarta de los Montes",
+    "300": "Zafra",
+    "129": "Zahínos",
+    "430": "Zalamea de la Serena",
+    "830": "Zarza (La)",
+    "611": "Zarza-Capilla",
+
+    //codigo manuales
+    "013": "Atalaya",
+    "014": "Azuaga",
+    "016": "Barcarrota",
+    "017": "Baterno",
+    "018": "Benquerencia de la Serena",
+    "019": "Berlanga",
+    "020": "Bienvenida",
+    "021": "Bodonal de la Sierra",
+    "022": "Burguillos del Cerro",
+    "023": "Cabeza del Buey",
+    "024": "Cabeza la Vaca",
+    "025": "Calamonte",
+    "026": "Calera de León",
+    "027": "Calzadilla de los Barros",
+    "028": "Campanario",
+    "029": "Campillo de Llerena",
+    "030": "Capilla",
+    "031": "Carmonita",
+    "032": "El Carrascalejo",
+    "033": "Casas de Don Pedro",
+    "034": "Casas de Reina",
+    "035": "Castilblanco",
+    "036": "Castuera",
+    "037": "La Codosera",
+    "038": "Cordobilla de Lácara",
+    "039": "La Coronada",
+    "040": "Corte de Peleas",
+    "041": "Corte de Peleas",
+    "042": "Cheles",
+    "043": "Don Álvaro",
+    "044": "Don Benito",
+    "045": "Entrín Bajo",
+    "046": "Esparragalejo",
+    "047": "Esparragosa de la Serena",
+    "048": "Esparragosa de Lares",
+    "049": "Feria",
+    "050": "Fregenal de la Sierra",
+    "051": "Fuenlabrada de los Montes",
+    "052": "Fuente de Cantos",
+    "053": "Fuente del Arco",
+    "054": "Fuente del Maestre",
+    "055": "Fuentes de León",
+    "056": "Garbayuela",
+    "057": "Garlitos",
+    "058": "La Garrovilla",
+    "059": "Granja de Torrehermosa",
+    "060": "Guareña",
+    "061": "La Haba",
+    "062": "Helechosa de los Montes",
+    "063": "Herrera del Duque",
+    "064": "Higuera de la Serena",
+    "065": "Higuera de Llerena",
+    "066": "Higuera de Vargas",
+    "067": "Higuera la Real",
+    "068": "Hinojosa del Valle",
+    "069": "Hornachos",
+    "070": "Jerez de los Caballeros",
+    "071": "La Lapa",
+    "072": "Lobón",
+    "073": "Llera",
+    "074": "Llerena",
+    "075": "Magacela",
+    "076": "Maguilla",
+    "077": "Malcocinado",
+    "078": "Malpartida de la Serena",
+    "079": "Manchita",
+    "080": "Medellín",
+    "081": "Medina de las Torres",
+    "082": "Mengabril",
+    "084": "Mirandilla",
+    "085": "Monesterio",
+    "086": "Montemolín",
+    "087": "Monterrubio de la Serena",
+    "088": "Montijo",
+    "089": "La Morera",
+    "090": "La Nava de Santiago",
+    "091": "Navalvillar de Pela",
+    "092": "Nogales",
+    "093": "Oliva de la Frontera",
+    "094": "Oliva de Mérida",
+    "095": "Olivenza",
+    "096": "Orellana de la Sierra",
+    "097": "Orellana la Vieja",
+    "098": "Palomas",
+    "099": "La Parra",
+    "101": "Peraleda del Zaucejo",
+    "102": "Puebla de Alcocer",
+    "103": "Puebla de la Calzada",
+    "104": "Puebla de la Reina",
+    "106": "Puebla del Prior",
+    "107": "Puebla de Obando",
+    "108": "San Jorge de Alor",
+    "109": "Quintana de la Serena",
+    "111": "Rena",
+    "112": "Retamal de Llerena",
+    "113": "Ribera del Fresno",
+    "114": "Risco",
+    "115": "La Roca de la Sierra",
+    "116": "Salvaleón",
+    "117": "Salvatierra de los Barros",
+    "118": "Sancti-Spíritus",
+    "119": "San Pedro de Mérida",
+    "121": "Santa Marta",
+    "122": "Los Santos de Maimona",
+    "123": "San Vicente de Alcántara",
+    "124": "Segura de León",
+    "125": "Siruela",
+    "126": "Solana de los Barros",
+    "127": "Talarrubias",
+    "128": "Talavera la Real",
+    "135": "Trujillanos",
+    "136": "Usagre",
+    "137": "Valdecaballeros",
+    "138": "Valdetorres",
+    "139": "Valencia de las Torres",
+    "141": "Valencia del Ventoso",
+    "142": "Valverde de Burguillos",
+    "143": "Valverde de Leganés",
+    "144": "Valverde de Llerena",
+    "145": "Valverde de Mérida",
+    "146": "Valle de la Serena",
+    "147": "Valle de Matamoros",
+    "148": "Valle de Santa Ana",
+    "149": "Villafranca de los Barros",
+    "151": "Villagonzalo",
+    "152": "Villalba de los Barros",
+    "153": "Villanueva de la Serena",
+    "154": "Villanueva del Fresno",
+    "155": "Villar del Rey",
+    "156": "Villar de Rena",
+    "157": "Villarta de los Montes",
+    "158": "Zafra",
+    "159": "Zahínos",
+    "161": "Zarza-Capilla",
+    "162": "La Zarza",
+    "901": "Valdelacalzada",
+    "902": "Pueblonuevo del Guadiana",
+    "903": "Guadiana",
+}
+
+export default function TopButton({
+    modoTop,
+    setModoTop,
+    topFilters,
+    setTopFilters
+}) {
+
+    // ==========================
+    // BOTON
+    // ==========================
+    if (!modoTop) {
+        return (
+            <button
+                className="top-floating-button"
+                onClick={() => setModoTop(true)}
+            >
+                🏆
+            </button>
+        );
+    }
+
+    // ==========================
+    // PANEL
+    // ==========================
+    return (
+        <div className="top-panel">
+
+            <div className="top-header">
+
+                <h3>TOP Lugares</h3>
+
+                <button
+                    className="close-btn"
+                    onClick={() => setModoTop(false)}
+                >
+                    ✖
+                </button>
+
+            </div>
+
+            {/* MUNICIPIO */}
+            <div className="top-group">
+                <label>Municipio</label>
+                <select
+                    value={topFilters.codigo_municipio ?? ""}
+                    onChange={(e) =>
+                        setTopFilters({
+                            ...topFilters,
+                            codigo_municipio: e.target.value || null
+                        })
+                    }
+                >
+
+                    {/* DESACTIVADO */}
+                    <option value="">
+                        Todos los municipios
+                    </option>
+
+                    {Object.entries(municipios)
+                        .sort((a, b) => a[1].localeCompare(b[1]))
+                        .map(([codigo, nombre]) => (
+
+                            <option
+                                key={codigo}
+                                value={codigo}
+                            >
+                                {nombre} ({`06${codigo}`})
+                            </option>
+
+                        ))}
+
+                </select>
+
+            </div>
+
+            {/* CATEGORIAS */}
+            <div className="top-group">
+
+                <label>Categorías</label>
+
+                <div className="lista-tipos-scroll">
+
+                    {Object.entries(opcionesTipo).map(([grupo, opciones]) => (
+
+                        <div
+                            key={grupo}
+                            className="grupo-categoria"
+                        >
+
+                            <span className="titulo-categoria">
+                                {grupo}
+                            </span>
+
+                            {opciones.map(opt => (
+
+                                <label
+                                    key={opt.id}
+                                    className="checkbox-item"
+                                >
+
+                                    <input
+                                        type="checkbox"
+
+                                        checked={
+                                            topFilters.tipo_detalle.includes(opt.id)
+                                        }
+
+                                        onChange={() => {
+
+                                            const actual =
+                                                topFilters.tipo_detalle;
+
+                                            const nuevos =
+                                                actual.includes(opt.id)
+                                                    ? actual.filter(i => i !== opt.id)
+                                                    : [...actual, opt.id];
+
+                                            setTopFilters({
+                                                ...topFilters,
+                                                tipo_detalle: nuevos
+                                            });
+                                        }}
+                                    />
+
+                                    <span>{opt.label}</span>
+
+                                </label>
+
+                            ))}
+
+                        </div>
+
+                    ))}
+
+                </div>
+
+            </div>
+
+        </div>
+    );
+}

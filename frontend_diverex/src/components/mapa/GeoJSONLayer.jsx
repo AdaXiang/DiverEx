@@ -3,6 +3,7 @@ import { GeoJSON, Marker, Popup, useMap } from "react-leaflet";
 import MarkerClusterGroup from 'react-leaflet-cluster';
 import { getLugaresFiltrados } from "../../apiServices/lugares.js";
 import { getFilteredRecommendations } from "../../apiServices/recommendations.js";
+import { getTop } from "../../apiServices/recommendations.js";
 import { AuthContext } from "../../context/AuthContext";
 
 import L from 'leaflet';
@@ -24,7 +25,7 @@ const COLORES_DATASET = {
     "default": "#6b7280"
 };
 
-export default function GeoJSONLayer({ filters, modoFiltro, recommendationFilters, userLocation, setLugarId, setLugaresFiltrados, lugarId, setLoading }) {
+export default function GeoJSONLayer({ filters, modoFiltro, recommendationFilters, userLocation, setLugarId, setLugaresFiltrados, lugarId, setLoading, modoTop, topFilters}) {
     const { user } = useContext(AuthContext);
     const map = useMap();
     const [data, setData] = useState(null);
@@ -52,17 +53,13 @@ export default function GeoJSONLayer({ filters, modoFiltro, recommendationFilter
         const fetchDatosFiltrados = async () => {
             try {
                 setLoading({visible:true, text:"Filtrando lugares..."})
-                let listId = []
                 //recomendaciones
-                console.log("Modo filtro:", modoFiltro);
-                if (!modoFiltro) {
-                    if (!user?.id) {return;}
-                    setLoading(prev => ({...prev, text:"Accediendo a tus recomendaciones..."}))
+                let listId = []
 
-                    const recomendaciones = await getFilteredRecommendations(user.id,recommendationFilters);
-                    listId = recomendaciones.data.map(item => item.id);
-
-                    //console.log("recomendaciones filtradas:", listId);
+                if(modoTop){
+                    setLoading(prev => ({...prev, text:"Recuperando top lugares..."}))
+                    const top = await getTop(topFilters);
+                    listId = top.data.map(item => item.id);
 
                     if (listId.length === 0) {
                         setData({
@@ -75,6 +72,27 @@ export default function GeoJSONLayer({ filters, modoFiltro, recommendationFilter
                         }
 
                         return;
+                    }
+                }else{
+                    if (!modoFiltro ) {
+                        if (!user?.id) {return;}
+                        setLoading(prev => ({...prev, text:"Accediendo a tus recomendaciones..."}))
+
+                        const recomendaciones = await getFilteredRecommendations(user.id,recommendationFilters);
+                        listId = recomendaciones.data.map(item => item.id);
+
+                        if (listId.length === 0) {
+                            setData({
+                                type: "FeatureCollection",
+                                features: []
+                            });
+
+                            if (setLugaresFiltrados) {
+                                setLugaresFiltrados([]);
+                            }
+
+                            return;
+                        }
                     }
                 }
 
@@ -119,7 +137,7 @@ export default function GeoJSONLayer({ filters, modoFiltro, recommendationFilter
 
         return () => clearTimeout(timer);
 
-    }, [filters,modoFiltro,user,recommendationFilters, userLocation,setLugaresFiltrados, setLoading]);
+    }, [filters,modoFiltro,user,recommendationFilters, userLocation,setLugaresFiltrados, setLoading, modoTop, topFilters]);
 
     useEffect(() => {
         if (!lugarId || !markerRefs.current[lugarId]) return;

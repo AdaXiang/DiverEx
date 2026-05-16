@@ -1,0 +1,165 @@
+.top-floating-button {
+    position: absolute;
+    top: 20px;
+    left: 23rem;
+
+    width: 60px;
+    height: 60px;
+
+    border-radius: 50%;
+    border: none;
+
+    font-size: 24px;
+
+    background: #f59e0b;
+    color: white;
+
+    cursor: pointer;
+
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+
+    z-index: 1000;
+
+    transition: 0.2s;
+}
+
+.top-floating-button:hover {
+    transform: scale(1.05);
+}
+
+.top-panel {
+    position: absolute;
+    top: 20px;
+    left: 23rem;
+
+    width: 320px;
+
+    background: white;
+
+    border-radius: 16px;
+
+    padding: 16px;
+
+    box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+
+    z-index: 1000;
+}
+
+.top-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 12px;
+}
+
+.top-header h3{
+    margin: 0 auto;
+}
+
+.close-btn {
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.top-group {
+    margin-bottom: 16px;
+}
+
+.top-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.top-group input[type="text"] {
+    width: 100%;
+
+    padding: 8px;
+
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+.lista-tipos-scroll {
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+.grupo-categoria {
+    margin-bottom: 12px;
+}
+
+.titulo-categoria {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    margin-bottom: 4px;
+}
+/* ========================== */
+/* SELECT */
+/* ========================== */
+.top-group select {
+    width: 100%;
+
+    padding: 10px 12px;
+
+    border-radius: 10px;
+    border: 1px solid #d1d5db;
+
+    background: white;
+
+    font-size: 14px;
+
+    outline: none;
+
+    transition: 0.2s;
+}
+
+.top-group select:focus {
+    border-color: #f59e0b;
+
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+}
+
+/* ========================== */
+/* BOTON APLICAR */
+/* ========================== */
+.apply-top-btn {
+    width: 100%;
+
+    margin-top: 12px;
+
+    padding: 12px;
+
+    border: none;
+    border-radius: 12px;
+
+    background: #f59e0b;
+    color: white;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+.apply-top-btn:hover {
+    transform: translateY(-1px);
+
+    background: #d97706;
+}
+
+.apply-top-btn:active {
+    transform: scale(0.98);
+}

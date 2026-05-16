@@ -1,4 +1,4 @@
-import { React, useContext } from "react";
+import { useContext } from "react";
 import './Filtros.css';
 import { AuthContext } from "../../context/AuthContext";
 

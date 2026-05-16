@@ -10,6 +10,7 @@ import { useContext, useState } from "react";
 import LugarCard from "./components/lugar/LugarCard";
 import ComentariosPanel from "./components/comentarios/ComentariosPanel";
 import List from "./components/lista/List";
+import TopButton from "./components/top/TopButton";
 
 function MainLayout() {
   const { user } = useContext(AuthContext);
@@ -29,6 +30,7 @@ function MainLayout() {
     estadosSeleccionados: ['B', 'R', 'M', 'E'],
     busquedaTexto: ""
   });
+
   const [modoFiltro, setModoFiltro] = useState(true);
   const [recommendationFilters, setRecommendationFilters] = useState({
       tipo: [],
@@ -43,6 +45,12 @@ function MainLayout() {
       electricidad: null,
       comedor: null,
       juegos: null
+  });
+
+  const [modoTop, setModoTop] = useState(false);
+  const [topFilters, setTopFilters] = useState({
+      codigo_municipio: null,
+      tipo_detalle: []
   });
 
   const [inputValue, setInputValue] = useState("");
@@ -67,6 +75,8 @@ function MainLayout() {
         lugaresFiltrados={lugaresFiltrados}
         lugarId={lugarId}
         setLoading={setLoading}
+        modoTop={modoTop}
+        topFilters={topFilters}
       />
 
       {alertData && (
@@ -100,6 +110,7 @@ function MainLayout() {
       <div id="panelFlotante">
         {!user && <LoginModal setAlert={setAlertData} />}
         {user && <UserPanel setAlert={setAlertData} setLugarId={setLugarId} />}
+
         <hr style={{ width: "100%", border: "none", borderTop: "1px solid #e5e7eb", margin: "10px 0" }} />
 
         {/* COMPONENTE DE FILTROS MODULAR Y ESTÁTICO */}
@@ -113,6 +124,13 @@ function MainLayout() {
           setRecommendationFilters={setRecommendationFilters}
         />
       </div>
+      
+      <TopButton
+        modoTop={modoTop}
+        setModoTop={setModoTop}
+        topFilters={topFilters}
+        setTopFilters={setTopFilters}
+      />
 
       <div id="panelFlotanteDos">
         {(lugarId || lugaresFiltrados.length > 0) && (
