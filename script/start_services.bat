@@ -63,6 +63,22 @@ IF %ERRORLEVEL% NEQ 0 (
 echo ✅ Entorno activado
 
 REM ===============================
+REM INSTALACION DE DEPENDENCIAS
+REM ===============================
+echo.
+echo 📦 Instalando dependencias...
+
+pip install -r "%BASE_DIR%\requirements.txt"
+
+IF %ERRORLEVEL% NEQ 0 (
+    echo ❌ Error instalando dependencias
+    pause
+    exit /b
+)
+
+echo ✅ Dependencias instaladas
+
+REM ===============================
 REM 3. ETL
 REM ===============================
 echo.
