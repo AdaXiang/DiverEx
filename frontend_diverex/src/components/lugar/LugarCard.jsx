@@ -7,9 +7,10 @@ import { getPlace } from "../../apiServices/placesInfo";
 import { getLikes, like, unlike } from "../../apiServices/likes";
 import { getFavorites, addFavorite, removeFavorite } from "../../apiServices/favorites";
 import { getVisits, createVisit, deleteVisit } from "../../apiServices/visits";
-import { getLugar } from "../../apiServices/lugares";
+import { getLugar, getLugaresSimilares } from "../../apiServices/lugares";
+import List from "../lista/List";
 
-export default function LugarCard({ lugarId, onClose, setAlert, showComment, setShowComment }) {
+export default function LugarCard({ lugarId, onClose, setAlert, showComment, setShowComment, setLugarId }) {
   const { user } = useContext(AuthContext);
 
   const [lugar, setLugar] = useState(null);
@@ -17,6 +18,10 @@ export default function LugarCard({ lugarId, onClose, setAlert, showComment, set
   const [liked, setLiked] = useState(false);
   const [favorite, setFavorite] = useState(false);
   const [visited, setVisited] = useState(false);
+
+  const [similares, setSimilares] = useState([]);
+
+  const [cargandoSimilares, setCargandoSimilares] = useState(false);
 
   const tipoMap = {
     "PU": "Parque urbano",
@@ -61,6 +66,30 @@ export default function LugarCard({ lugarId, onClose, setAlert, showComment, set
 
     fetchData();
   }, [lugarId, user, liked]);
+
+  const handleVerSimilares = async () => {
+    setCargandoSimilares(true);
+    try {
+      // Llamada al endpoint que procesa el CSV/Cluster
+      const res = await getLugaresSimilares(lugarId);
+
+      const features = res.features || [];
+      const lugaresSimilares = features.map((feature) => ({
+        id: feature.properties.id,
+        nombre: feature.properties.nombre,
+        municipio: feature.properties.municipio,
+        ...feature.properties,
+      }));
+
+      await console.log("Lugares similares obtenidos:", lugaresSimilares);
+
+      setSimilares(lugaresSimilares);
+    } catch (err) {
+      setAlert?.({ title: "Error", message: "No se pudieron cargar lugares similares", type: 0 });
+    } finally {
+      setCargandoSimilares(false);
+    }
+  };
 
   // 🔘 handlers
   const handleLike = async () => {
@@ -123,10 +152,6 @@ export default function LugarCard({ lugarId, onClose, setAlert, showComment, set
     <div className="lugar-card">
       <button className="close-btn" onClick={onClose}>✖</button>
 
-      {/* imagen */}
-      {/* <div className="lugar-img" /> */}
-
-
       <div className="lugar-content">
         <br />
         <h3 className="lugar-title">{lugar.name}</h3>
@@ -161,8 +186,6 @@ export default function LugarCard({ lugarId, onClose, setAlert, showComment, set
           )}
         </div>
 
-
-
         {/* 🔥 NUEVO: acciones */}
         <div className="lugar-actions">
           <button
@@ -185,6 +208,39 @@ export default function LugarCard({ lugarId, onClose, setAlert, showComment, set
           >
             👁️
           </button>
+        </div>
+
+        {/* SECCIÓN DE LUGARES SIMILARES */}
+        <div style={{ marginTop: "1rem" }}>
+
+          {similares.length === 0 ? (
+            <button
+              className="comentarios-btn"
+              onClick={handleVerSimilares}
+              disabled={cargandoSimilares}
+              style={{ width: "100%", marginTop: "0.5rem" }}
+            >
+              {cargandoSimilares ? "Analizando clúster..." : "Ver lugares similares 🔍"}
+            </button>
+          ) : (
+            <div style={{ marginTop: "0.5rem" }}>
+              <b>Lugares Similares</b>
+              <List items={similares} setLugarId={setLugarId} />
+
+              {/* Botón para cerrar los similares */}
+              <button
+                className="comentarios-btn"
+                onClick={() => setSimilares([])}
+                style={{
+                  width: "100%",
+                  marginTop: "0.5rem",
+                  backgroundColor: "#6c757d" // Un tono gris para diferenciarlo
+                }}
+              >
+                Ocultar similares ⬆️
+              </button>
+            </div>
+          )}
         </div>
 
         {!showComment && (

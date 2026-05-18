@@ -33,24 +33,24 @@ function MainLayout() {
 
   const [modoFiltro, setModoFiltro] = useState(true);
   const [recommendationFilters, setRecommendationFilters] = useState({
-      tipo: [],
-      estado: [],
-      accesible: null,
-      //codigo_municipio: "",
-      tipo_detalle: [],
-      media_min: 1,
-      media_max: 5,
-      //caracteristicas parque
-      agua: null,
-      electricidad: null,
-      comedor: null,
-      juegos: null
+    tipo: [],
+    estado: [],
+    accesible: null,
+    //codigo_municipio: "",
+    tipo_detalle: [],
+    media_min: 1,
+    media_max: 5,
+    //caracteristicas parque
+    agua: null,
+    electricidad: null,
+    comedor: null,
+    juegos: null
   });
 
   const [modoTop, setModoTop] = useState(false);
   const [topFilters, setTopFilters] = useState({
-      codigo_municipio: null,
-      tipo_detalle: []
+    codigo_municipio: null,
+    tipo_detalle: []
   });
 
   const [inputValue, setInputValue] = useState("");
@@ -64,13 +64,13 @@ function MainLayout() {
   return (
     <div className="App">
       {/* Añadimos setLugaresFiltrados como prop al MapView */}
-      <MapView 
-        setUserLocation={setUserLocation} 
-        filters={filters} 
-        modoFiltro={modoFiltro} 
+      <MapView
+        setUserLocation={setUserLocation}
+        filters={filters}
+        modoFiltro={modoFiltro}
         recommendationFilters={recommendationFilters}
-        userLocation={userLocation} 
-        setLugarId={setLugarId} 
+        userLocation={userLocation}
+        setLugarId={setLugarId}
         setLugaresFiltrados={setLugaresFiltrados}
         lugaresFiltrados={lugaresFiltrados}
         lugarId={lugarId}
@@ -124,7 +124,7 @@ function MainLayout() {
           setRecommendationFilters={setRecommendationFilters}
         />
       </div>
-      
+
       <TopButton
         modoTop={modoTop}
         setModoTop={setModoTop}
@@ -144,6 +144,7 @@ function MainLayout() {
                 showComment={showComment}
                 setShowComment={setShowComment}
                 onClose={() => setLugarId(null)}
+                setLugarId={setLugarId}
               />
             )}
 
@@ -165,7 +166,7 @@ function MainLayout() {
           </div>
         )}
 
-        <Loading visible={loading.visible}  text={loading.text} />
+        <Loading visible={loading.visible} text={loading.text} />
       </div>
     </div>
   );

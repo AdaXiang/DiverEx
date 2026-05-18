@@ -116,7 +116,7 @@ class LugarService:
             props = item.get("properties", {})
             
             distancia_calculada = item.get("distancia_km", 0)
-            # Creamos el DTO asegurándonos de que CADA nombre coincida con el DTO
+            
             dto = LugarDTO(
                 id=item.get("_id"),
                 tipo_lugar=item.get("tipo_lugar", "desconocido"),
@@ -145,7 +145,7 @@ class LugarService:
             results.append(dto)
         return results
     
-    # Método de búsqueda geoespacial (ejemplo básico)
+    # Método de búsqueda geoespacial 
     def search_by_location(self, lat: float, lon: float, radius_km: float):
         raw_data = self.dao.search_by_location(lat, lon, radius_km)
         results = []
@@ -180,6 +180,45 @@ class LugarService:
             results.append(dto)
         return results
     
+    def getLugaresSimilares(self, lugar_id: str):
+        results = []
+        raw_data = self.dao.getLugaresSimilares(lugar_id)
+
+        if not raw_data:
+            return []
+
+        results = []
+
+        for item in raw_data:
+            props = item.get("properties", {})
+            
+            dto = LugarDTO(
+                id=item.get("_id"),
+                tipo_lugar=item.get("tipo_lugar", "desconocido"),
+                nombre=props.get("nombre", "Sin nombre"),
+                municipio=props.get("municipio_nombre", "Provincia de Badajoz"),
+                dataset=item.get("dataset", "general"), 
+                acceso_silla_ruedas=props.get("acceso_silla_ruedas", 0),
+                codigo_provincia=props.get("codigo_provincia"),
+                codigo_municipio=props.get("codigo_municipio"),
+                titularidad=props.get("titularidad"),
+                gestion=props.get("gestion"),
+                superficie_cubierta=props.get("superficie_cubierta"),
+                superficie_aire=props.get("superficie_aire"),
+                superficie_solar=props.get("superficie_solar"),
+                estado=props.get("estado"),
+                agua=props.get("agua"),
+                saneamiento=props.get("saneamiento"),
+                electricidad=props.get("electricidad"),
+                comedor=props.get("comedor"),
+                juegos_infantiles=props.get("juegos_infantiles"),
+                otras_prestaciones=props.get("otras_prestaciones"),
+                geo_point=item.get("geo_point"),  
+                geometry=item.get("geometry"),
+            )
+            results.append(dto)
+        return results
+
     # Create, Update y Delete
     def create_place(self, lugar_data: dict):
         return self.dao.create(lugar_data)

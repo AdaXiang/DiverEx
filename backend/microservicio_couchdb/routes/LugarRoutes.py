@@ -69,7 +69,6 @@ async def geospatial_filter(
     """
     return service.search_by_location(lat, lon, radius)
 
-
 #-----------------------------
 # CREATE, UPDATE, DELETE
 #-----------------------------
@@ -116,7 +115,17 @@ async def get_lugares(
 @router.get("/lugar/{site_id}")
 async def read_site(site_id: str):
     site = service.get_site_details(site_id)
-    print(type(site))
     if not site:
         raise HTTPException(status_code=404, detail="Sitio no encontrado")
     return to_geojson([site])
+
+@router.get("/lugar/{site_id}/similares")
+async def find_similar_places(site_id: str):
+    """
+    Endpoint para encontrar sitios similares a un sitio dado.
+    """
+    sites = service.getLugaresSimilares(site_id)
+    if not sites:
+        raise HTTPException(status_code=404, detail="Sitio no encontrado")
+    print(f"Similares a {site_id}: {[s.id for s in sites]}")
+    return to_geojson(sites)

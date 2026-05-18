@@ -80,3 +80,14 @@ export const getLugar = async (id) => {
         throw err;
     }
 };
+
+export const getLugaresSimilares = async (id) => {
+    try {
+        const res = await apiC.get(`/lugar/${id}/similares`);
+        console.log("Respuesta de lugares similares:", res.data);
+        return res.data;
+    } catch (err) {
+        console.error("Error al obtener lugares similares:", err);
+        throw err;
+    };
+}

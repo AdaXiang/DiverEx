@@ -9,12 +9,13 @@
 # - likes
 # - media
 # - características del lugar
-#
 # =========================================================
 
 # =========================================================
 # LIBRERÍAS
 # =========================================================
+
+from pathlib import Path
 
 import numpy as np
 
@@ -490,7 +491,9 @@ centroides_reales = pd.DataFrame(
 print(centroides_reales.loc[top_clusters_indices, ["likes", "media", "acceso_silla_ruedas", "superficie_cubierta"]])
 
 # Exportar resultados
-df.to_csv("clusters_lugares_v2.csv", index=False)
+base_dir = Path(__file__).resolve().parent
+output_dir = (base_dir / "../backend/microservicio_couchdb").resolve()
+df.to_csv(output_dir /"clusters_lugares.csv", index=False)
 print("\nProceso finalizado correctamente. Archivo 'clusters_lugares_v2.csv' guardado.")
 
 # =========================================================

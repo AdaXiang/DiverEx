@@ -1,6 +1,7 @@
 import json
-
+import pandas as pd
 import requests
+import os
 from typing import Optional, List, Dict
 from couchbase.search import SearchOptions, GeoDistanceQuery
 from couchbase.options import Any, SearchOptions
@@ -240,4 +241,64 @@ class LugarDAO:
         """
         
         return self._execute(query)
-           
+
+    def getLugaresSimilares(self, lugar_id: str):
+        # 1. Ruta al CSV
+        # Si está en la misma carpeta que el DAO, sería así:
+        csv_path = os.path.join(os.path.dirname(__file__), "../clusters_lugares.csv")
+        
+        try:
+            # 2. Leer el CSV
+            df = pd.read_csv(csv_path)
+            print(f"CSV cargado correctamente. Total lugares con cluster: {len(df)}")
+            
+            # 3. Buscar la fila del lugar actual para saber su clúster
+            lugar_actual = df[df['_id'] == lugar_id]
+            
+            # Si el lugar no está en el CSV (ej. es muy nuevo), hacemos un fallback a aleatorios
+            if lugar_actual.empty:
+                return self._get_random_fallback(lugar_id)
+                
+            cluster_id = lugar_actual.iloc[0]['cluster']
+            
+            # 4. Filtrar todos los lugares que tengan ese mismo clúster, excluyendo el actual
+            similares_df = df[(df['cluster'] == cluster_id) & (df['_id'] != lugar_id)]
+            
+            if similares_df.empty:
+                return self._get_random_fallback(lugar_id)
+                
+            # 5. Coger hasta 3 aleatorios de ese clúster
+            cantidad = min(3, len(similares_df))
+            seleccionados = similares_df.sample(n=cantidad)
+            
+            # Convertir a lista de Python
+            lista_ids = seleccionados['_id'].tolist()
+            
+            # 6. Formatear para N1QL (ej: '["id1", "id2", "id3"]')
+            ids_formateados = ", ".join([f'"{id}"' for id in lista_ids])
+            
+            # 7. Consultar los detalles completos a Couchbase
+            query = f"""
+            SELECT META(t).id AS id, t.*
+            FROM `{self.bucket}` t
+            WHERE META(t).id IN [{ids_formateados}]
+            """
+            
+            return self._execute(query)
+            
+        except Exception as e:
+            print(f"Error procesando CSV de clusters: {e}")
+            return self._get_random_fallback(lugar_id)
+
+
+    # --- MÉTODO AUXILIAR (Añade este método justo debajo) ---
+    def _get_random_fallback(self, lugar_id: str):
+        """Devuelve 3 lugares aleatorios si falla el clustering"""
+        query = f"""
+        SELECT META(t).id AS id, t.*
+        FROM `{self.bucket}` t
+        WHERE META(t).id != "{lugar_id}"
+        ORDER BY RANDOM()
+        LIMIT 3
+        """
+        return self._execute(query)
