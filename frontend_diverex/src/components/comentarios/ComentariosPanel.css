@@ -3,6 +3,7 @@
     max-width: 90%;
 
     max-height: 85vh;
+    min-height: 15rem;
 
     overflow-y: auto;
 

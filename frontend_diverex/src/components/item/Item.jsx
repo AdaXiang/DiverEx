@@ -1,5 +1,6 @@
 import "./Item.css";
 export default function Item({ data, setLugarId }) {
+    console.log("DATA ITEM:", data);
 
     const tipoMap = {
         "PU": "Parque urbano",
@@ -31,8 +32,14 @@ export default function Item({ data, setLugarId }) {
         municipio,
         estado,
         accesible,
+        acceso_silla_ruedas,
         distancia_km
     } = data;
+
+    const esAccesible =
+        accesible ??
+        acceso_silla_ruedas ??
+        false;
 
     return (
         <div className="item" onClick={() => setLugarId(id)}>
@@ -54,8 +61,8 @@ export default function Item({ data, setLugarId }) {
                     {estadoMap[estado]}
                 </span>
 
-                <span className={`accesible ${accesible ? "yes" : "no"}`}>
-                    {accesible ? "Accesible" : "No accesible"}
+                <span className={`accesible ${esAccesible ? "yes" : "no"}`}>
+                    {esAccesible ? "Accesible" : "No accesible"}
                 </span>
             </div>
 

@@ -24,6 +24,9 @@ def getRecomendaciones(user_id):
 def getRecomendacionesFiltradas(user_id, filtros):
     query = """
     MATCH (u:Usuario {id: $uid})-[:FAVORITO|VISITA]->(l:Lugar)<-[:FAVORITO|VISITA]-(other:Usuario)
+    WITH DISTINCT other, u
+    LIMIT 100
+    
     MATCH (other)-[:FAVORITO|VISITA]->(rec:Lugar)
     """
     # Recomendaciones genericas
